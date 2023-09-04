@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rowarlockgbserver", "rowarlockgbserver\rowarlockgbserver.csproj", "{4DAC59EB-383A-4C18-A275-9D58F06B3193}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ro.CrossPlatform", "Ro.CrossPlatform\Ro.CrossPlatform.csproj", "{717AFB28-A64C-41C3-9626-9EA189D66375}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ro.Basic", "Ro.Basic\Ro.Basic.csproj", "{723BCD37-FD87-43A3-9402-6C04384F9C9F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4DAC59EB-383A-4C18-A275-9D58F06B3193}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DAC59EB-383A-4C18-A275-9D58F06B3193}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DAC59EB-383A-4C18-A275-9D58F06B3193}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DAC59EB-383A-4C18-A275-9D58F06B3193}.Release|Any CPU.Build.0 = Release|Any CPU
+		{717AFB28-A64C-41C3-9626-9EA189D66375}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{717AFB28-A64C-41C3-9626-9EA189D66375}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{717AFB28-A64C-41C3-9626-9EA189D66375}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{717AFB28-A64C-41C3-9626-9EA189D66375}.Release|Any CPU.Build.0 = Release|Any CPU
+		{723BCD37-FD87-43A3-9402-6C04384F9C9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{723BCD37-FD87-43A3-9402-6C04384F9C9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{723BCD37-FD87-43A3-9402-6C04384F9C9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{723BCD37-FD87-43A3-9402-6C04384F9C9F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
