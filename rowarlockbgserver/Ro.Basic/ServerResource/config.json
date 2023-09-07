@@ -1,0 +1,23 @@
+{
+  "basic": {
+    "web_server_ip": "127.0.0.1",
+    "web_server_port": "7788"
+  },
+  "database": {
+    "dbpath": "./db/robgdb.db",
+    "db_table": "./ServerResource/dbtable.json",
+    "db_update": "./ServerResource/dbupdate.json"
+  },
+  "usertasktable": [
+    "ro_apitest"
+  ],
+  "available": {
+    "executejob": 2,
+    "queuejob": 5
+  },
+  "version": {
+    "version": "0..1",
+    "author": "Nate Feng",
+    "lastupdate": "2023-09-05"
+  }
+}

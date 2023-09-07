@@ -1,0 +1,37 @@
+[
+  {
+    "name": "ro_userdetails",
+    "field": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "desc": "用户id, 主键"
+      },
+      {
+        "name": "uname",
+        "type": "TEXT",
+        "desc": "用户名"
+      },
+      {
+        "name": "unickname",
+        "type": "TEXT",
+        "desc": "用户昵称"
+      },
+      {
+        "name": "upsd",
+        "type": "TEXT",
+        "desc": "用户密码"
+      },
+      {
+        "name": "uemail",
+        "type": "TEXT",
+        "desc": "用户注册用的邮箱"
+      },
+      {
+        "name": "ulogintime",
+        "type": "TEXT",
+        "desc": "用户登陆的时间(YYYY-MM-DD HH:MM:SS.SSS)"
+      }
+    ]
+  }
+]

@@ -1,4 +1,3 @@
-
 namespace Ro.CrossPlatform.Func;
 
 public abstract class GatherFunc
@@ -9,7 +8,7 @@ public abstract class GatherFunc
     /// <returns></returns>
     public static string NowDateTime()
     {
-        var datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+        string datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
         return datetime;
     }
 }

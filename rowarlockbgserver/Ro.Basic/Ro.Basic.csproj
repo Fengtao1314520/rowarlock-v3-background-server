@@ -4,7 +4,19 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+
+
     </PropertyGroup>
 
+
+    <ItemGroup>
+        <None Remove="ServerResource\config.json"/>
+        <Content Include="ServerResource\config.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Update="ServerResource\dbtable.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 
 </Project>

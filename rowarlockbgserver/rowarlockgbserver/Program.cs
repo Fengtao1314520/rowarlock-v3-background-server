@@ -1,19 +1,23 @@
 ﻿using Ro.Basic.UEnum;
 using Ro.CrossPlatform.Logs;
+using Ro.MidBridge;
 
 namespace rowarlockgbserver;
 
 internal static class Program
 {
     private static void Main(string[] args)
-    { 
+    {
         // 输出
         LoginOutput();
-        //MainEntrance me = new MainEntrance();
-        //me.Start();
+        MainEntrance me = new();
+        me.InitServer();
+        me.Start();
         LogCore.Log("系统加载完毕", UOutLevel.SUCCESS);
-        Console.ReadKey(true);
-        //me.Stop();
+        //当有输入时,且必须是exit，停止服务
+        string? rl = "";
+        while (rl != "exit") rl = Console.ReadLine();
+        me.Stop();
         LogCore.Log("结束执行...", UOutLevel.INFO);
     }
 
