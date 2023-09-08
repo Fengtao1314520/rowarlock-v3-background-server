@@ -1,6 +1,8 @@
 using Ro.Database;
 using Newtonsoft.Json.Linq;
+using Ro.Basic.UEnum;
 using Ro.Basic.UType;
+using Ro.CrossPlatform.Logs;
 using Ro.MidBridge.Resolve;
 
 namespace Ro.MidBridge;
@@ -8,6 +10,8 @@ namespace Ro.MidBridge;
 public class MainEntrance : IDisposable
 {
     #region const 值
+
+    public bool Status { get; set; }
 
     /// <summary>
     /// 基础配置文件json路径
@@ -23,8 +27,14 @@ public class MainEntrance : IDisposable
 
     #region 私有 类
 
+    /// <summary>
+    /// 数据库entrance
+    /// </summary>
     private DatabaseEntrance _databaseEntrance;
 
+    /// <summary>
+    /// 解析配置
+    /// </summary>
     private readonly ResolveConfig _resolveConfig;
 
     #endregion
@@ -35,6 +45,7 @@ public class MainEntrance : IDisposable
     /// </summary>
     public MainEntrance()
     {
+        // INFO: 赋值
         _databaseEntrance = null!;
         _resolveConfig = new ResolveConfig();
     }
@@ -42,24 +53,25 @@ public class MainEntrance : IDisposable
 
     #region 对外方法
 
-    public void InitServer()
-    {
-        JObject configJobject = _resolveConfig.ResolveConfigToJObject(_configpath);
-        DatabaseHandle(configJobject);
-    }
-
     /// <summary>
     /// 开始服务
     /// </summary>
-    public void Start()
+    public MainEntrance Start()
     {
+        // config的JObject
+        JObject configJObject = _resolveConfig.ResolveConfigToJObject(_configpath);
+        // 数据库处理
+        DatabaseHandle(configJObject);
+        return this;
     }
 
     /// <summary>
     /// 关闭服务
     /// </summary>
-    public void Stop()
+    public MainEntrance Stop()
     {
+        _databaseEntrance.DisconnectDb();
+        return this;
     }
 
     /// <summary>
@@ -68,7 +80,7 @@ public class MainEntrance : IDisposable
     /// <exception cref="NotImplementedException"></exception>
     public void Dispose()
     {
-        throw new NotImplementedException();
+        _databaseEntrance.Dispose();
     }
 
     #endregion
@@ -82,6 +94,7 @@ public class MainEntrance : IDisposable
     {
         // 解析数据库配置
         JObject dbconfig = configJobject["database"]!.ToObject<JObject>()!;
+        // 数据库信息类型 属性
         DataBaseInfoType dataBaseInfoType = new()
         {
             Path = dbconfig["dbpath"]!.ToString(),
@@ -90,9 +103,15 @@ public class MainEntrance : IDisposable
         };
         //解析数据库配置
         _databaseEntrance = new DatabaseEntrance(dataBaseInfoType);
-        // 连接数据库
-        _databaseEntrance.ConnectDb();
-        // 初始化
-        _databaseEntrance.InitDatabase();
+        if (_databaseEntrance.DatabaseStatus)
+        {
+            // 连接数据库，并初始化
+            _databaseEntrance.ConnectDb().InitDatabase();
+            Status = _databaseEntrance.DatabaseStatus;
+        }
+        else
+        {
+            Status = false;
+        }
     }
 }

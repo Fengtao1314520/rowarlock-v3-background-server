@@ -7,7 +7,7 @@ namespace Ro.Database.Util;
 /// 工具
 /// 底层执行
 /// </summary>
-internal class Table
+internal class TableUtil
 {
     /// <summary>
     /// 创建表

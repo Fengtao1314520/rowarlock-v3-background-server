@@ -1,11 +1,13 @@
 using System.Text;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json.Linq;
-using UtilTable = Ro.Database.Util.Table;
+using Ro.Basic.UEnum;
+using Ro.CrossPlatform.Logs;
+using Ro.Database.Util;
 
 namespace Ro.Database.Controller;
 
-public class Table
+public class TableController
 {
     /// <summary>
     /// 数据库连接
@@ -16,16 +18,16 @@ public class Table
     /// <summary>
     /// 工具类
     /// </summary>
-    private readonly UtilTable _utilTable;
+    private readonly TableUtil _tableUtil;
 
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="sqliteConnection"></param>
-    public Table(SqliteConnection sqliteConnection)
+    public TableController(SqliteConnection sqliteConnection)
     {
         //赋值
-        _utilTable = new UtilTable();
+        _tableUtil = new TableUtil();
         _sqliteConnection = sqliteConnection;
     }
 
@@ -37,7 +39,7 @@ public class Table
     /// <returns></returns>
     public bool CheckTableExist(string tablename)
     {
-        return _utilTable.TableExist(_sqliteConnection, tablename);
+        return _tableUtil.TableExist(_sqliteConnection, tablename);
     }
 
 
@@ -60,7 +62,11 @@ public class Table
 
         //移除最后一处标点符号
         string command = sb.ToString().Remove(sb.ToString().Length - 1, 1);
+#if DEBUG
+        // 输出
+        LogCore.Log(command, UOutLevel.DEBUG);
+#endif
         //执行创建table
-        _utilTable.CreateTable(_sqliteConnection, name.ToString(), command);
+        _tableUtil.CreateTable(_sqliteConnection, name.ToString(), command);
     }
 }

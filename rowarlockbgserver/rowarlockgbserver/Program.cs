@@ -1,39 +1,23 @@
 ﻿using Ro.Basic.UEnum;
 using Ro.CrossPlatform.Logs;
 using Ro.MidBridge;
+using rowarlockgbserver;
 
-namespace rowarlockgbserver;
-
-internal static class Program
+OutputHeader.LoginOutput();
+MainEntrance me = new();
+me.Start();
+if (me.Status)
 {
-    private static void Main(string[] args)
-    {
-        // 输出
-        LoginOutput();
-        MainEntrance me = new();
-        me.InitServer();
-        me.Start();
-        LogCore.Log("系统加载完毕", UOutLevel.SUCCESS);
-        //当有输入时,且必须是exit，停止服务
-        string? rl = "";
-        while (rl != "exit") rl = Console.ReadLine();
-        me.Stop();
-        LogCore.Log("结束执行...", UOutLevel.INFO);
-    }
-
-    /// <summary>
-    ///  登录输出
-    /// </summary>
-    private static void LoginOutput()
-    {
-        LogCore.Out("========================================================");
-        LogCore.Log("ROWARLOCK...", UOutLevel.DEBUG);
-        LogCore.Log("系统初始化...", UOutLevel.SUCCESS);
-        LogCore.Log("硬加载启动中...", UOutLevel.INFO);
-        LogCore.Log("软加载启动中...", UOutLevel.ERROR);
-        LogCore.Log("输出测试...", UOutLevel.WARN);
-        LogCore.Log("自检测试...", UOutLevel.EXCEPT);
-        LogCore.Log("自检完成...", UOutLevel.JSON);
-        LogCore.Out("========================================================");
-    }
+    LogCore.Log("系统加载完毕", UOutLevel.SUCCESS);
+// 当有输入时,且必须是exit，停止服务
+    string? rl = "";
+    while (rl != "exit") rl = Console.ReadLine();
 }
+else
+{
+    //输出日志
+    LogCore.Log("系统加载失败", UOutLevel.ERROR);
+}
+
+me.Stop().Dispose();
+LogCore.Log("结束执行...", UOutLevel.INFO);
