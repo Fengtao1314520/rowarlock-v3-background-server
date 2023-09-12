@@ -39,7 +39,7 @@ public class TableController
     /// <returns></returns>
     public bool CheckTableExist(string tablename)
     {
-        return _tableUtil.TableExist(_sqliteConnection, tablename);
+        return _tableUtil.ExistTable(_sqliteConnection, tablename);
     }
 
 
@@ -68,5 +68,9 @@ public class TableController
 #endif
         //执行创建table
         _tableUtil.CreateTable(_sqliteConnection, name.ToString(), command);
+    }
+
+    public void UpdateTableByName(JObject jobject)
+    {
     }
 }

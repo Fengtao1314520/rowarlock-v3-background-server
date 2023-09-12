@@ -28,7 +28,7 @@ internal class TableUtil
     /// <param name="connection"></param>
     /// <param name="tablename"></param>
     /// <returns></returns>
-    internal bool TableExist(SqliteConnection connection, string tablename)
+    internal bool ExistTable(SqliteConnection connection, string tablename)
     {
         SqliteCommand cmd = new()
         {
@@ -36,5 +36,16 @@ internal class TableUtil
             CommandText = $"SELECT COUNT(*) FROM sqlite_master where type='table' and name='{tablename}';"
         };
         return 0 != Convert.ToInt32(cmd.ExecuteScalar());
+    }
+
+    /// <summary>
+    /// 删除表
+    /// </summary>
+    /// <param name="connection"></param>
+    /// <param name="tablename"></param>
+    internal void DeleteTable(SqliteConnection connection, string tablename)
+    {
+        SqliteCommand cmd = new() {Connection = connection, CommandText = $"DROP TABLE {tablename}"};
+        cmd.ExecuteNonQuery();
     }
 }

@@ -19,5 +19,6 @@ else
     LogCore.Log("系统加载失败", UOutLevel.ERROR);
 }
 
+// 关闭并释放资源
 me.Stop().Dispose();
 LogCore.Log("结束执行...", UOutLevel.INFO);

@@ -108,6 +108,12 @@ public class MainEntrance : IDisposable
             // 连接数据库，并初始化
             _databaseEntrance.ConnectDb().InitDatabase();
             Status = _databaseEntrance.DatabaseStatus;
+
+            // 更新数据库版本号
+            if (!Status) return;
+            //update:2023-09-08 更新数据库版本号
+            JObject version = configJobject["version"]!.ToObject<JObject>()!;
+            _databaseEntrance.UpdateDatabaseVersion(version);
         }
         else
         {

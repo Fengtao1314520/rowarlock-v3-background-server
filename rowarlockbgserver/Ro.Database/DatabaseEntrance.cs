@@ -31,7 +31,7 @@ public class DatabaseEntrance : IDisposable
     /// <summary>
     /// 数据库状态
     /// </summary>
-    public bool DatabaseStatus { get; set; }
+    public bool DatabaseStatus { get; private set; }
 
     #region 构造函数
 
@@ -116,6 +116,26 @@ public class DatabaseEntrance : IDisposable
         LogCore.Log($"数据表检测完毕,结果:{checkstatus}", UOutLevel.INFO);
         // 结果
         DatabaseStatus = checkstatus;
+    }
+
+    /// <summary>
+    /// 更新数据库版本号
+    /// </summary>
+    public void UpdateDatabaseVersion(JObject version)
+    {
+        bool isexist = _tableController.CheckTableExist("ro_version");
+        if (!isexist.Equals(false))
+        {
+            // 说明上一步已经出错了
+            // TODO:
+        }
+        else
+        {
+            LogCore.Log("系统检测到version表,将更新version表", UOutLevel.WARN);
+            //根据表名执行创建
+            _tableController.UpdateTableByName(version);
+            LogCore.Log("更新version表成功", UOutLevel.SUCCESS);
+        }
     }
 
     #endregion

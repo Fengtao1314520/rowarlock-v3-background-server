@@ -33,5 +33,30 @@
         "desc": "用户登陆的时间(YYYY-MM-DD HH:MM:SS.SSS)"
       }
     ]
+  },
+  {
+    "name": "ro_version",
+    "field": [
+      {
+        "name": "main",
+        "type": "TEXT",
+        "desc": "版本号主，主键"
+      },
+      {
+        "name": "version",
+        "type": "TEXT",
+        "desc": "版本号"
+      },
+      {
+        "name": "author",
+        "type": "TEXT",
+        "desc": "作者"
+      },
+      {
+        "name": "lastupdate",
+        "type": "TEXT",
+        "desc": "最后更新时间"
+      }
+    ]
   }
 ]
