@@ -1,21 +1,26 @@
 using Microsoft.Data.Sqlite;
+using Ro.Basic.UEnum;
+using Ro.CrossPlatform.Logs;
 
 namespace Ro.Database.Util;
 
-public class DeleteUtil
+internal class DeleteUtil
 {
     /// <summary>
     /// 删除表内所有数据
     /// </summary>
     /// <param name="connection"></param>
     /// <param name="tabname">表名</param>
-    public void DeleteAll(SqliteConnection connection, string tabname)
+    internal void DeleteAll(SqliteConnection connection, string tabname)
     {
         SqliteCommand cmd = new()
         {
             Connection = connection,
             CommandText = $"DELETE FROM {tabname}"
         };
+#if DEBUG
+        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+#endif
         cmd.ExecuteNonQuery();
     }
 
@@ -27,13 +32,16 @@ public class DeleteUtil
     /// <param name="tabname"></param>
     /// <param name="condition"></param>
     /// <returns></returns>
-    public bool DeleteData(SqliteConnection connection, string tabname, string condition)
+    internal bool DeleteData(SqliteConnection connection, string tabname, string condition)
     {
         SqliteCommand cmd = new()
         {
             Connection = connection,
             CommandText = $"DELETE FROM {tabname} WHERE {condition}"
         };
+#if DEBUG
+        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+#endif
         int count = cmd.ExecuteNonQuery();
 
         return count != 0;

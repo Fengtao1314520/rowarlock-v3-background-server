@@ -2,8 +2,11 @@ using System.Text;
 using Microsoft.Data.Sqlite;
 using Newtonsoft.Json.Linq;
 using Ro.Basic.UEnum;
+using Ro.Basic.UType;
+using Ro.CrossPlatform.Extension;
 using Ro.CrossPlatform.Logs;
-using Ro.Database.Util;
+using Ro.Database.Dependent;
+
 
 namespace Ro.Database.Controller;
 
@@ -15,10 +18,6 @@ public class TableController
     /// </summary>
     private readonly SqliteConnection _sqliteConnection;
 
-    /// <summary>
-    /// 工具类
-    /// </summary>
-    private readonly TableUtil _tableUtil;
 
     /// <summary>
     /// 构造函数
@@ -27,7 +26,6 @@ public class TableController
     public TableController(SqliteConnection sqliteConnection)
     {
         //赋值
-        _tableUtil = new TableUtil();
         _sqliteConnection = sqliteConnection;
     }
 
@@ -39,7 +37,14 @@ public class TableController
     /// <returns></returns>
     public bool CheckTableExist(string tablename)
     {
-        return _tableUtil.ExistTable(_sqliteConnection, tablename);
+        try
+        {
+            return Polymerization.TableUtil.ExistTable(_sqliteConnection, tablename);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
     }
 
 
@@ -67,10 +72,42 @@ public class TableController
         LogCore.Log(command, UOutLevel.DEBUG);
 #endif
         //执行创建table
-        _tableUtil.CreateTable(_sqliteConnection, name.ToString(), command);
+        Polymerization.TableUtil.CreateTable(_sqliteConnection, name.ToString(), command);
     }
 
-    public void UpdateTableByName(JObject jobject)
+
+    /// <summary>
+    /// 更新表
+    /// </summary>
+    /// <param name="tabname"></param>
+    /// <param name="jobject"></param>
+    /// <param name="fieldkey"></param>
+    public void ReplaceTableByName(string tabname, JObject jobject, string fieldkey)
     {
+        var keyValueTypeList = jobject.ToKeyValueTypeList();
+        // keys
+        string keys = keyValueTypeList.GetKeys();
+        // values
+        string values = keyValueTypeList.GetValues();
+
+        // 转为sql语句
+        string sqlstring = keyValueTypeList.GetKeyAndValueAsSqlString();
+
+        KeyValueType? findkv = keyValueTypeList.Find(item => item.Key == fieldkey);
+
+        if (findkv is null) return;
+
+        // 查询字段对应数据是否存在
+        int count = Polymerization.SelectUtil.SelectDataCount(_sqliteConnection, tabname, findkv.Key,
+            findkv.Value.ToString()!);
+
+        //小于1 说明不存在
+        if (count < 1)
+            // 插入数据
+            Polymerization.InsertUtil.InsertDataWithField(_sqliteConnection, tabname, keys, values);
+        else
+            // 更新数据
+            Polymerization.UpdateUtil.UpdateDataWithCondition(_sqliteConnection, tabname, sqlstring,
+                $"{fieldkey} = '{findkv.Value}'");
     }
 }

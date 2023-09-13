@@ -1,4 +1,5 @@
 using Newtonsoft.Json.Linq;
+using Ro.Basic.UType;
 using Ro.CrossPlatform.Func;
 
 namespace Ro.MidBridge.Resolve;
@@ -24,9 +25,17 @@ public class ResolveConfig
     /// </summary>
     /// <param name="config"></param>
     /// <returns></returns>
-    public JObject ResolveDatabaseJObject(JObject config)
+    public DataBaseInfoType ResolveDataBaseInfoType(JObject config)
     {
-        JObject dbconfig = (config["database"] as JObject)!;
-        return dbconfig;
+        // 解析数据库配置
+        JObject dbconfig = config["database"]!.ToObject<JObject>()!;
+        // 数据库信息类型 属性
+        DataBaseInfoType dataBaseInfoType = new()
+        {
+            Path = dbconfig["dbpath"]!.ToString(),
+            UpdatePath = dbconfig["db_update"]!.ToString(),
+            TablePath = dbconfig["db_table"]!.ToString()
+        };
+        return dataBaseInfoType;
     }
 }

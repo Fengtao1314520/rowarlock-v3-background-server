@@ -1,8 +1,6 @@
-using Ro.Database;
 using Newtonsoft.Json.Linq;
-using Ro.Basic.UEnum;
 using Ro.Basic.UType;
-using Ro.CrossPlatform.Logs;
+using Ro.Database;
 using Ro.MidBridge.Resolve;
 
 namespace Ro.MidBridge;
@@ -11,7 +9,7 @@ public class MainEntrance : IDisposable
 {
     #region const 值
 
-    public bool Status { get; set; }
+    public bool Status { get; private set; }
 
     /// <summary>
     /// 基础配置文件json路径
@@ -25,7 +23,7 @@ public class MainEntrance : IDisposable
 
     #endregion
 
-    #region 私有 类
+    #region 私有 各种类入口
 
     /// <summary>
     /// 数据库entrance
@@ -60,7 +58,7 @@ public class MainEntrance : IDisposable
     {
         // config的JObject
         JObject configJObject = _resolveConfig.ResolveConfigToJObject(_configpath);
-        // 数据库处理
+        // info 1. 数据库处理
         DatabaseHandle(configJObject);
         return this;
     }
@@ -92,28 +90,16 @@ public class MainEntrance : IDisposable
     /// <param name="configJobject"></param>
     private void DatabaseHandle(JObject configJobject)
     {
-        // 解析数据库配置
-        JObject dbconfig = configJobject["database"]!.ToObject<JObject>()!;
         // 数据库信息类型 属性
-        DataBaseInfoType dataBaseInfoType = new()
-        {
-            Path = dbconfig["dbpath"]!.ToString(),
-            UpdatePath = dbconfig["db_update"]!.ToString(),
-            TablePath = dbconfig["db_table"]!.ToString()
-        };
+        DataBaseInfoType dataBaseInfoType = _resolveConfig.ResolveDataBaseInfoType(configJobject);
         //解析数据库配置
         _databaseEntrance = new DatabaseEntrance(dataBaseInfoType);
-        if (_databaseEntrance.DatabaseStatus)
+        Status = _databaseEntrance.DatabaseStatus;
+        if (Status)
         {
-            // 连接数据库，并初始化
-            _databaseEntrance.ConnectDb().InitDatabase();
-            Status = _databaseEntrance.DatabaseStatus;
-
-            // 更新数据库版本号
-            if (!Status) return;
-            //update:2023-09-08 更新数据库版本号
             JObject version = configJobject["version"]!.ToObject<JObject>()!;
-            _databaseEntrance.UpdateDatabaseVersion(version);
+            // 连接数据库，并初始化,并更新版本号
+            _databaseEntrance.ConnectDb().InitDatabase(version);
         }
         else
         {

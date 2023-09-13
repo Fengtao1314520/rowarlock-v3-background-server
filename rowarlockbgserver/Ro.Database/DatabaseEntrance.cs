@@ -46,8 +46,7 @@ public class DatabaseEntrance : IDisposable
         _tableController = null!;
 
         // 数据库前置操作
-        bool prestatus = CheckDatabaseFile(_dataBaseInfoType);
-        DatabaseStatus = prestatus;
+        CheckDatabaseFile(_dataBaseInfoType);
     }
 
     #endregion
@@ -71,10 +70,14 @@ public class DatabaseEntrance : IDisposable
 
             // INFO: 赋值
             _tableController = new TableController(_sqliteConnection);
+
+            DatabaseStatus = true;
         }
         catch (Exception e)
         {
             LogCore.Log($"数据库连接失败, {e.Message}", UOutLevel.ERROR);
+
+            DatabaseStatus = false;
         }
 
         return this;
@@ -104,38 +107,24 @@ public class DatabaseEntrance : IDisposable
 
     /// <summary>
     /// 初始化数据库
+    /// info: 1. 检查数据库文件是否存在
+    /// info: 2. 更新版本号
     /// </summary>
+    /// <param name="version">版本号</param>
     /// <returns></returns>
-    public void InitDatabase()
+    public void InitDatabase(JObject version)
     {
         string tablepath = _dataBaseInfoType.TablePath;
-        LogCore.Log("系统数据库初始化,请稍等...", UOutLevel.INFO);
+        LogCore.Info("系统数据库初始化,请稍等...");
         var tableJobjectArray = JsonFunc.ReturnJsonObjectByFile<List<JObject>>(tablepath);
-        bool checkstatus = CheckDbTableComplete(tableJobjectArray);
+        // 检查各表是否完整
+        CheckDbTableComplete(tableJobjectArray);
         // 输出日志
-        LogCore.Log($"数据表检测完毕,结果:{checkstatus}", UOutLevel.INFO);
-        // 结果
-        DatabaseStatus = checkstatus;
-    }
-
-    /// <summary>
-    /// 更新数据库版本号
-    /// </summary>
-    public void UpdateDatabaseVersion(JObject version)
-    {
-        bool isexist = _tableController.CheckTableExist("ro_version");
-        if (!isexist.Equals(false))
-        {
-            // 说明上一步已经出错了
-            // TODO:
-        }
-        else
-        {
-            LogCore.Log("系统检测到version表,将更新version表", UOutLevel.WARN);
-            //根据表名执行创建
-            _tableController.UpdateTableByName(version);
-            LogCore.Log("更新version表成功", UOutLevel.SUCCESS);
-        }
+        LogCore.Info($"数据表检测完毕,结果:{DatabaseStatus}");
+        // 更新版本号
+        UpdateDatabaseVersion(version);
+        // 输出日志
+        LogCore.Info($"数据库初始化完毕,结果:{DatabaseStatus}");
     }
 
     #endregion
@@ -147,32 +136,37 @@ public class DatabaseEntrance : IDisposable
     /// 检查数据库文件
     /// </summary>
     /// <param name="dataBaseInfoType"></param>
-    private bool CheckDatabaseFile(DataBaseInfoType dataBaseInfoType)
+    private void CheckDatabaseFile(DataBaseInfoType dataBaseInfoType)
     {
         string dbfilepath = dataBaseInfoType.Path;
-        //如果文件不存在,则创建一个新的数据库文件
+        // 如果文件不存在,则创建一个新的数据库文件
         if (File.Exists(dbfilepath))
         {
-            LogCore.Log("系统检测到数据库文件", UOutLevel.SUCCESS);
-            return true;
+            LogCore.Success("系统已检测到数据库文件");
+            DatabaseStatus = true;
         }
-
-        //INFO: 创建数据库文件，(如果不存在）
-        try
+        else
         {
-            LogCore.Log("系统未检测到数据库,将重新新建", UOutLevel.ERROR);
-            string? dpath = Path.GetDirectoryName(dbfilepath);
-            if (string.IsNullOrEmpty(dpath)) return false;
-            Directory.CreateDirectory(dpath);
-            // 依赖File类创建文件
-            File.Create(dbfilepath);
-            LogCore.Log("系统重建数据库成功", UOutLevel.SUCCESS);
-            return true;
-        }
-        catch (Exception e)
-        {
-            LogCore.Log($"系统重建数据库失败, {e.Message}", UOutLevel.EXCEPT);
-            return false;
+            // INFO: 创建数据库文件，(如果不存在）
+            try
+            {
+                LogCore.Warn("系统未检测到数据库,将重新新建数据库文件");
+                string dpath = Path.GetDirectoryName(dbfilepath)!;
+                // 创建文件夹
+                Directory.CreateDirectory(dpath);
+                // 创建文件
+                FileStream filestream = File.Create(dbfilepath);
+                // UPDATE: 释放资源
+                filestream.Close();
+                filestream.Dispose();
+                LogCore.Success("系统创建数据库成功");
+                DatabaseStatus = true;
+            }
+            catch (Exception e)
+            {
+                LogCore.Exception($"系统重建数据库失败, {e.Message}");
+                DatabaseStatus = false;
+            }
         }
     }
 
@@ -181,9 +175,9 @@ public class DatabaseEntrance : IDisposable
     /// 检查数据库表是否完整
     /// </summary>
     /// <param name="tableJobjectArray"></param>
-    private bool CheckDbTableComplete(List<JObject> tableJobjectArray)
+    private void CheckDbTableComplete(List<JObject> tableJobjectArray)
     {
-        LogCore.Log($"正在检测数据表是否完整...", UOutLevel.INFO);
+        LogCore.Info($"正在检测数据表是否完整...");
         try
         {
             //循环定义,做执行
@@ -191,18 +185,37 @@ public class DatabaseEntrance : IDisposable
             {
                 string tablename = element["name"]!.ToString(); //获取表名称
                 bool isexist = _tableController.CheckTableExist(tablename);
-                if (!isexist.Equals(false)) return;
-                LogCore.Log($"系统未检测到数据表:'{tablename}',将新建数据表", UOutLevel.WARN);
+                if (isexist) return;
+                LogCore.Success($"系统未检测到数据表, 创建数据表:'{tablename}' 成功");
                 //根据表名执行创建
                 _tableController.CreateTableByName(element);
-                LogCore.Log($"创建数据表:'{tablename}' 成功", UOutLevel.SUCCESS);
             });
-            return true;
+
+            DatabaseStatus = true;
         }
         catch (Exception e)
         {
-            LogCore.Log($"创建数据表失败, {e.Message}", UOutLevel.EXCEPT);
-            return false;
+            LogCore.Exception($"创建数据表失败, {e.Message}");
+            DatabaseStatus = false;
+        }
+    }
+
+
+    /// <summary>
+    /// 更新数据库版本号
+    /// </summary>
+    private void UpdateDatabaseVersion(JObject version)
+    {
+        try
+        {
+            //根据表名执行创建
+            _tableController.ReplaceTableByName("ro_version", version, "name");
+            LogCore.Success("更新version表成功");
+        }
+        catch (Exception e)
+        {
+            LogCore.Exception($"更新version表失败, {e.Message}");
+            DatabaseStatus = false;
         }
     }
 

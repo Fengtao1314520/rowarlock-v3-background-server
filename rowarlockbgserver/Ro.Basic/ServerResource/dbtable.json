@@ -38,7 +38,7 @@
     "name": "ro_version",
     "field": [
       {
-        "name": "main",
+        "name": "name",
         "type": "TEXT",
         "desc": "版本号主，主键"
       },

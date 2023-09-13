@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Ro.Basic\Ro.Basic.csproj"/>
+        <ProjectReference Include="..\Ro.Common\Ro.Common.csproj"/>
         <ProjectReference Include="..\Ro.CrossPlatform\Ro.CrossPlatform.csproj"/>
         <ProjectReference Include="..\Ro.Database\Ro.Database.csproj"/>
         <ProjectReference Include="..\Ro.MidBridge\Ro.MidBridge.csproj"/>

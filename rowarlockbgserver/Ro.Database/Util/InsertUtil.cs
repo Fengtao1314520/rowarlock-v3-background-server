@@ -1,4 +1,6 @@
 using Microsoft.Data.Sqlite;
+using Ro.Basic.UEnum;
+using Ro.CrossPlatform.Logs;
 
 namespace Ro.Database.Util;
 
@@ -18,6 +20,9 @@ public class InsertUtil
             Connection = connection,
             CommandText = $"INSERT INTO {tablename} VALUES ({data})"
         };
+#if DEBUG
+        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+#endif
         cmd.ExecuteNonQuery();
     }
 
@@ -37,6 +42,9 @@ public class InsertUtil
             Connection = connection,
             CommandText = $"INSERT INTO {tablename} ({fieldname}) VALUES ({data})"
         };
+#if DEBUG
+        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+#endif
         int count = cmd.ExecuteNonQuery();
 
         return count;

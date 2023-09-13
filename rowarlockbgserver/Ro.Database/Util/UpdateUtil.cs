@@ -1,8 +1,10 @@
 using Microsoft.Data.Sqlite;
+using Ro.Basic.UEnum;
+using Ro.CrossPlatform.Logs;
 
 namespace Ro.Database.Util;
 
-public class UpdateUtil
+internal class UpdateUtil
 {
     /// <summary>
     /// 按照条件进行更新数据
@@ -20,6 +22,10 @@ public class UpdateUtil
             Connection = connection,
             CommandText = $"UPDATE {tablename} SET {setdata} WHERE {conditiondata}"
         };
+
+#if DEBUG
+        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+#endif
         int result = cmd.ExecuteNonQuery();
 
         return result;
@@ -40,6 +46,10 @@ public class UpdateUtil
             Connection = connection,
             CommandText = $"UPDATE {tablename} SET {setdata}"
         };
+
+#if DEBUG
+        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+#endif
         int result = cmd.ExecuteNonQuery();
 
         return result;

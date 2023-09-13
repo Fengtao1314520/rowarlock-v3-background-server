@@ -1,10 +1,12 @@
 using System.Data;
 using Microsoft.Data.Sqlite;
+using Ro.Basic.UEnum;
 using Ro.CrossPlatform.Extension;
+using Ro.CrossPlatform.Logs;
 
 namespace Ro.Database.Util;
 
-public class SelectUtil
+internal class SelectUtil
 {
     /// <summary>
     /// 带条件查询数据
@@ -24,6 +26,10 @@ public class SelectUtil
             Connection = connection,
             CommandText = $"SELECT {columndata} FROM {tablename} WHERE {condition}"
         };
+
+#if DEBUG
+        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+#endif
         // 执行查询
         SqliteDataReader reader = cmd.ExecuteReader();
         DataTable dataTable = new();
@@ -62,6 +68,9 @@ public class SelectUtil
     {
         SqliteCommand cmd = new() {Connection = connection, CommandText = $"SELECT {columndata} FROM {tablename}"};
 
+#if DEBUG
+        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+#endif
         SqliteDataReader reader = cmd.ExecuteReader();
         DataTable dataTable = new();
         dataTable.Load(reader);
@@ -124,6 +133,11 @@ public class SelectUtil
             Connection = connection,
             CommandText = $"SELECT COUNT(*) AS 'totalcount' FROM {tablename} WHERE {conditiondata}"
         };
+
+#if DEBUG
+        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+#endif
+
         SqliteDataReader reader = cmd.ExecuteReader();
         if (reader.HasRows)
         {

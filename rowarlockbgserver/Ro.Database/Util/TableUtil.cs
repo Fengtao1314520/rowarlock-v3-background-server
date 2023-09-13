@@ -1,4 +1,6 @@
 using Microsoft.Data.Sqlite;
+using Ro.Basic.UEnum;
+using Ro.CrossPlatform.Logs;
 
 namespace Ro.Database.Util;
 
@@ -18,6 +20,9 @@ internal class TableUtil
     internal void CreateTable(SqliteConnection connection, string tablename, string data)
     {
         SqliteCommand cmd = new() {Connection = connection, CommandText = $"CREATE TABLE {tablename} ({data})"};
+#if DEBUG
+        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+#endif
         cmd.ExecuteNonQuery();
     }
 
@@ -35,6 +40,9 @@ internal class TableUtil
             Connection = connection,
             CommandText = $"SELECT COUNT(*) FROM sqlite_master where type='table' and name='{tablename}';"
         };
+#if DEBUG
+        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+#endif
         return 0 != Convert.ToInt32(cmd.ExecuteScalar());
     }
 
@@ -46,6 +54,9 @@ internal class TableUtil
     internal void DeleteTable(SqliteConnection connection, string tablename)
     {
         SqliteCommand cmd = new() {Connection = connection, CommandText = $"DROP TABLE {tablename}"};
+#if DEBUG
+        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+#endif
         cmd.ExecuteNonQuery();
     }
 }
