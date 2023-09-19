@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using Ro.Basic.UType;
 using Ro.CrossPlatform.Logs;
 using Ro.Basic.UEnum;
+using Ro.CrossPlatform.Extension;
 using Ro.CrossPlatform.Func;
 using Ro.Database.Controller;
 
@@ -28,6 +29,8 @@ public class DatabaseEntrance : IDisposable
     /// </summary>
     private TableController _tableController;
 
+    private ExecuteFileController _executeFileController;
+
     /// <summary>
     /// 数据库状态
     /// </summary>
@@ -44,6 +47,7 @@ public class DatabaseEntrance : IDisposable
         _dataBaseInfoType = dataBaseInfoType;
         _sqliteConnection = null!;
         _tableController = null!;
+        _executeFileController = null!;
 
         // 数据库前置操作
         CheckDatabaseFile(_dataBaseInfoType);
@@ -70,6 +74,7 @@ public class DatabaseEntrance : IDisposable
 
             // INFO: 赋值
             _tableController = new TableController(_sqliteConnection);
+            _executeFileController = new ExecuteFileController(_sqliteConnection);
 
             DatabaseStatus = true;
         }
@@ -125,6 +130,33 @@ public class DatabaseEntrance : IDisposable
         UpdateDatabaseVersion(version);
         // 输出日志
         LogCore.Info($"数据库初始化完毕,结果:{DatabaseStatus}");
+    }
+
+
+    /// <summary>
+    /// 更新数据库
+    /// 基于sql文件
+    /// </summary>
+    /// <param name="sqlfiles"></param>
+    public void UpdateByFile(FileInfo[] sqlfiles)
+    {
+        LogCore.Info("系统数据库更新,请稍等...");
+        try
+        {
+            // INFO 排序
+            Array.Sort(sqlfiles, new FileNameComparer());
+            // INFO 执行
+            sqlfiles.ToList().ForEach(file =>
+            {
+                string name = file.Name;
+                LogCore.Log($"系统正在读取{name}的内容,即将执行...", UOutLevel.INFO);
+                _executeFileController.ExecuteFileCommands(file);
+            });
+        }
+        catch (Exception e)
+        {
+            LogCore.Exception($"系统数据库更新失败, {e.Message}");
+        }
     }
 
     #endregion

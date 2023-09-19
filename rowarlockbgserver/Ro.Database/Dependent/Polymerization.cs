@@ -16,6 +16,7 @@ public static class Polymerization
     internal static SelectUtil SelectUtil { get; private set; }
     internal static UpdateUtil UpdateUtil { get; private set; }
     internal static ReplaceUtil ReplaceUtil { get; private set; }
+    internal static NudeExecuteUtil NudeExecuteUtil { get; private set; }
 
     static Polymerization()
     {
@@ -25,5 +26,6 @@ public static class Polymerization
         SelectUtil = new SelectUtil();
         UpdateUtil = new UpdateUtil();
         ReplaceUtil = new ReplaceUtil();
+        NudeExecuteUtil = new NudeExecuteUtil();
     }
 };

@@ -17,6 +17,10 @@
         <None Update="ServerResource\dbtable.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
+        <None Update="ServerResource\sqls\0.00.01.sql">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
+
 
 </Project>

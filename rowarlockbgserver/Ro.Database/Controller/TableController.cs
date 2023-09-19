@@ -18,7 +18,6 @@ public class TableController
     /// </summary>
     private readonly SqliteConnection _sqliteConnection;
 
-
     /// <summary>
     /// 构造函数
     /// </summary>
@@ -89,7 +88,6 @@ public class TableController
         string keys = keyValueTypeList.GetKeys();
         // values
         string values = keyValueTypeList.GetValues();
-
         // 转为sql语句
         string sqlstring = keyValueTypeList.GetKeyAndValueAsSqlString();
 

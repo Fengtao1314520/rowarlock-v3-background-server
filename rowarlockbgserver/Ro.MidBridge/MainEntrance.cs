@@ -1,5 +1,6 @@
 using Newtonsoft.Json.Linq;
 using Ro.Basic.UType;
+using Ro.CrossPlatform.Logs;
 using Ro.Database;
 using Ro.MidBridge.Resolve;
 
@@ -19,7 +20,7 @@ public class MainEntrance : IDisposable
     /// <summary>
     /// SQL文件的文件夹路径
     /// </summary>
-    private readonly string _sqlfolder = @"./ResFiles/UPDATESQL";
+    private readonly string _sqlfolder = @"./ServerResource/sqls";
 
     #endregion
 
@@ -59,7 +60,9 @@ public class MainEntrance : IDisposable
         // config的JObject
         JObject configJObject = _resolveConfig.ResolveConfigToJObject(_configpath);
         // info 1. 数据库处理
-        DatabaseHandle(configJObject);
+        InitDatabaseAndUpdateMainVersion(configJObject);
+        // info 2. 读取sql文件夹，并更新
+        UpdateSql();
         return this;
     }
 
@@ -86,9 +89,12 @@ public class MainEntrance : IDisposable
 
     /// <summary>
     /// 数据库操作
+    /// 1. 判断db文件是否存在
+    /// 2. 判断各表是否存在且完整
+    /// 3. 更新主板号
     /// </summary>
     /// <param name="configJobject"></param>
-    private void DatabaseHandle(JObject configJobject)
+    private void InitDatabaseAndUpdateMainVersion(JObject configJobject)
     {
         // 数据库信息类型 属性
         DataBaseInfoType dataBaseInfoType = _resolveConfig.ResolveDataBaseInfoType(configJobject);
@@ -100,10 +106,35 @@ public class MainEntrance : IDisposable
             JObject version = configJobject["version"]!.ToObject<JObject>()!;
             // 连接数据库，并初始化,并更新版本号
             _databaseEntrance.ConnectDb().InitDatabase(version);
+            // 更新状态
+            Status = _databaseEntrance.DatabaseStatus;
         }
         else
         {
             Status = false;
         }
+    }
+
+    private void UpdateSql()
+    {
+        if (!Directory.Exists(_sqlfolder))
+        {
+            LogCore.Info("未找到SQL文件夹, 跳过更新");
+            return;
+        }
+
+        DirectoryInfo directoryInfo = new(_sqlfolder);
+        //判断文件夹内是否有文件
+        if (directoryInfo.GetFiles().Length == 0)
+        {
+            LogCore.Info("SQL文件夹内没有文件,跳过更新");
+            return;
+        }
+
+        //获取文件夹内的文件
+        var sqlfiles = directoryInfo.GetFiles();
+        //更新数据库
+        _databaseEntrance.UpdateByFile(sqlfiles);
+        Status = true;
     }
 }

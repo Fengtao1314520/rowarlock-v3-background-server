@@ -58,5 +58,130 @@
         "desc": "最后更新时间"
       }
     ]
+  },
+  {
+    "name": "ro_client",
+    "field": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "desc": "客户端id, 主键"
+      },
+      {
+        "name": "macaddress",
+        "type": "TEXT",
+        "desc": "mac地址"
+      },
+      {
+        "name": "ipaddress",
+        "type": "TEXT",
+        "desc": "ip地址"
+      },
+      {
+        "name": "lastregistrationdatetime",
+        "type": "TEXT",
+        "desc": "最后注册时间"
+      },
+      {
+        "name": "lastheartbeatdatetime",
+        "type": "TEXT",
+        "desc": "最后心跳时间"
+      },
+      {
+        "name": "heartbeatstatus",
+        "type": "TEXT",
+        "desc": "心跳状态"
+      },
+      {
+        "name": "clientstatus",
+        "type": "TEXT",
+        "desc": "客户端状态"
+      },
+      {
+        "name": "clientbusniess",
+        "type": "INTEGER",
+        "desc": "客户端业务数量(当前+等待)"
+      },
+      {
+        "name": "clienttype",
+        "type": "TEXT",
+        "desc": "客户端类型, web, client, mobile, mixed"
+      }
+    ]
+  },
+  {
+    "name": "ro_job",
+    "field": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "desc": "job的id, 主键"
+      },
+      {
+        "name": "type",
+        "type": "TEXT",
+        "desc": "job的type"
+      },
+      {
+        "name": "clientid",
+        "type": "TEXT",
+        "desc": "job执行客户端"
+      },
+      {
+        "name": "status",
+        "type": "TEXT",
+        "desc": "job的状态"
+      },
+      {
+        "name": "expandtime",
+        "type": "INTEGER",
+        "desc": "job预期耗时(秒）"
+      },
+      {
+        "name": "elapsedtime",
+        "type": "INTEGER",
+        "desc": "job已耗时(秒）"
+      },
+      {
+        "name": "starttime",
+        "type": "TEXT",
+        "desc": "job开始时间(YYYY-MM-DD HH:MM:SS.SSS)"
+      },
+      {
+        "name": "endtime",
+        "type": "TEXT",
+        "desc": "job结束时间(YYYY-MM-DD HH:MM:SS.SSS)"
+      },
+      {
+        "name": "jobcontent",
+        "type": "TEXT",
+        "desc": "job内容"
+      },
+      {
+        "name": "jobresult",
+        "type": "TEXT",
+        "desc": "job结果"
+      },
+      {
+        "name": "jobresultdesc",
+        "type": "TEXT",
+        "desc": "job结果描述"
+      },
+      {
+        "name": "jobresultcode",
+        "type": "TEXT",
+        "desc": "job结果代码"
+      },
+      {
+        "name": "jobresulttime",
+        "type": "TEXT",
+        "desc": "job结果时间(YYYY-MM-DD HH:MM:SS.SSS)"
+      },
+      {
+        "name": "finialresultt",
+        "type": "TEXT",
+        "desc": "最终结果"
+      }
+    ]
   }
 ]

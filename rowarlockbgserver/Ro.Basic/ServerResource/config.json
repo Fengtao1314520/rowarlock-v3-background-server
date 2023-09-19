@@ -8,17 +8,14 @@
     "db_table": "./ServerResource/dbtable.json",
     "db_update": "./ServerResource/dbupdate.json"
   },
-  "usertasktable": [
-    "ro_apitest"
-  ],
-  "available": {
-    "executejob": 2,
-    "queuejob": 5
-  },
   "version": {
     "name": "main",
     "version": "0.0.1",
     "author": "Nate Feng",
     "lastupdate": "2023-09-05"
+  },
+  "clientconfig": {
+    "max_parallel_execute": 2,
+    "max_quene_execute": 5
   }
 }
