@@ -38,4 +38,23 @@ public class ResolveConfig
         };
         return dataBaseInfoType;
     }
+
+    /// <summary>
+    /// 解析config节点
+    /// 获取HttpServerType
+    /// </summary>
+    /// <param name="config"></param>
+    /// <returns></returns>
+    public HttpServerType ResolveHttpServerType(JObject config)
+    {
+        // 解析http配置
+        JObject httpconfig = config["httpserver"]!.ToObject<JObject>()!;
+        // http信息类型 属性
+        HttpServerType httpServerType = new()
+        {
+            Address = httpconfig["web_server_address"]!.ToString(),
+            Port = httpconfig["web_server_port"]!.ToObject<int>()!
+        };
+        return httpServerType;
+    }
 }

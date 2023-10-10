@@ -2,6 +2,7 @@ using Newtonsoft.Json.Linq;
 using Ro.Basic.UType;
 using Ro.CrossPlatform.Logs;
 using Ro.Database;
+using Ro.Http;
 using Ro.MidBridge.Resolve;
 
 namespace Ro.MidBridge;
@@ -32,12 +33,16 @@ public class MainEntrance : IDisposable
     private DatabaseEntrance _databaseEntrance;
 
     /// <summary>
+    ///  网络entrance
+    /// </summary>
+    private HttpEntrance _httpEntrance;
+
+    /// <summary>
     /// 解析配置
     /// </summary>
     private readonly ResolveConfig _resolveConfig;
 
     #endregion
-
 
     /// <summary>
     /// 构造函数
@@ -46,9 +51,9 @@ public class MainEntrance : IDisposable
     {
         // INFO: 赋值
         _databaseEntrance = null!;
+        _httpEntrance = null!;
         _resolveConfig = new ResolveConfig();
     }
-
 
     #region 对外方法
 
@@ -59,10 +64,12 @@ public class MainEntrance : IDisposable
     {
         // config的JObject
         JObject configJObject = _resolveConfig.ResolveConfigToJObject(_configpath);
-        // info 1. 数据库处理
-        InitDatabaseAndUpdateMainVersion(configJObject);
+        // info 1. 打开数据库
+        StartDatabase(configJObject);
         // info 2. 读取sql文件夹，并更新
         UpdateSql();
+        // info 3.打开网络服务
+        StartHttpServer(configJObject);
         return this;
     }
 
@@ -86,6 +93,7 @@ public class MainEntrance : IDisposable
 
     #endregion
 
+    #region 私有方法
 
     /// <summary>
     /// 数据库操作
@@ -93,17 +101,17 @@ public class MainEntrance : IDisposable
     /// 2. 判断各表是否存在且完整
     /// 3. 更新主板号
     /// </summary>
-    /// <param name="configJobject"></param>
-    private void InitDatabaseAndUpdateMainVersion(JObject configJobject)
+    /// <param name="configJObject"></param>
+    private void StartDatabase(JObject configJObject)
     {
         // 数据库信息类型 属性
-        DataBaseInfoType dataBaseInfoType = _resolveConfig.ResolveDataBaseInfoType(configJobject);
-        //解析数据库配置
+        DataBaseInfoType dataBaseInfoType = _resolveConfig.ResolveDataBaseInfoType(configJObject);
+        // 解析数据库配置
         _databaseEntrance = new DatabaseEntrance(dataBaseInfoType);
         Status = _databaseEntrance.DatabaseStatus;
         if (Status)
         {
-            JObject version = configJobject["version"]!.ToObject<JObject>()!;
+            JObject version = configJObject["version"]!.ToObject<JObject>()!;
             // 连接数据库，并初始化,并更新版本号
             _databaseEntrance.ConnectDb().InitDatabase(version);
             // 更新状态
@@ -115,6 +123,10 @@ public class MainEntrance : IDisposable
         }
     }
 
+
+    /// <summary>
+    /// 升级sql文件
+    /// </summary>
     private void UpdateSql()
     {
         if (!Directory.Exists(_sqlfolder))
@@ -137,4 +149,21 @@ public class MainEntrance : IDisposable
         _databaseEntrance.UpdateByFile(sqlfiles);
         Status = true;
     }
+
+
+    /// <summary>
+    /// 启动httpserver
+    /// </summary>
+    /// <param name="configJObject"></param>
+    private void StartHttpServer(JObject configJObject)
+    {
+        // 数据库信息类型 属性
+        HttpServerType httpServerType = _resolveConfig.ResolveHttpServerType(configJObject);
+        // 初始化http服务
+        _httpEntrance = new HttpEntrance(httpServerType);
+
+        _httpEntrance.Start();
+    }
+
+    #endregion
 }

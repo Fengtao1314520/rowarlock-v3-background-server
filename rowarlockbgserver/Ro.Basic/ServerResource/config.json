@@ -1,6 +1,6 @@
 {
-  "basic": {
-    "web_server_ip": "127.0.0.1",
+  "httpserver": {
+    "web_server_address": "127.0.0.1",
     "web_server_port": "7788"
   },
   "database": {
