@@ -40,7 +40,6 @@ public class HttpEntrance : IDisposable
         // 👇 Create the WebApplicationBuilder
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
 
-
         // 👇 Add the required Carter services
         builder.Services.AddCarter();
         // 👇 Create the WebApplication instance
