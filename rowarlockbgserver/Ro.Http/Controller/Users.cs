@@ -22,6 +22,13 @@ public class Users : ICarterModule
         app.MapPost("/upuserinfo", UpdateUserInfo);
     }
 
+
+    /// <summary>
+    /// 更新用户信息
+    /// </summary>
+    /// <param name="ctx"></param>
+    /// <param name="userInfo"></param>
+    /// <returns></returns>
     private IResult UpdateUserInfo(HttpContext ctx, UserInfo userInfo)
     {
 #if DEBUG
