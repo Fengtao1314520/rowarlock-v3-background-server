@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Ro.Basic.UType.FBConnection;
 
 /// <summary>
@@ -5,9 +7,8 @@ namespace Ro.Basic.UType.FBConnection;
 /// </summary>
 public class UserInfo
 {
-    public string UserId { get; set; }
-
-    public string UserName { get; set; }
-
-    public string? UserPassword { get; set; }
+    public string userid { get; set; }
+    public string username { get; set; }
+    public string? userpassword { get; set; }
+    public string? datetime { get; set; }
 }

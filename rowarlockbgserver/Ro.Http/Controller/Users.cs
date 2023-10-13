@@ -33,19 +33,21 @@ public class Users : ICarterModule
     {
 #if DEBUG
         Console.WriteLine("进入UpdateUserInfo");
-        Console.WriteLine("userid: " + userInfo.UserId);
+        Console.WriteLine("userid: " + userInfo.userid);
 #endif
 
         ctx.Response.ContentType = "application/json";
 
+        // 验证
         ValidationResult? result = ctx.Request.Validate(userInfo);
+
         if (result.IsValid)
         {
             var notempty = FBConnectionFun.GetResponseBody(UReqCode.Success, new UserInfo()
             {
-                UserId = userInfo.UserId,
-                UserName = "测试账号",
-                UserPassword = "123456"
+                userid = userInfo.userid,
+                username = "测试账号",
+                datetime = GatherFunc.NowDateTime()
             });
 
             return Results.Json(notempty);
@@ -53,9 +55,8 @@ public class Users : ICarterModule
 
         var empty = FBConnectionFun.GetResponseBody(UReqCode.ParaEmpty, new UserInfo()
         {
-            UserId = userInfo.UserId,
-            UserName = "",
-            UserPassword = string.Empty
+            userid = userInfo.userid,
+            datetime = GatherFunc.NowDateTime()
         });
         return Results.Json(empty);
     }
@@ -74,28 +75,27 @@ public class Users : ICarterModule
         ctx.Response.ContentType = "application/json";
 
         //检索首个userid
-        string? queryid = ctx.Request.Query.AsMultiple<string>("userid").FirstOrDefault();
-
+        string? userid = ctx.Request.Query.AsMultiple<string>("userid").FirstOrDefault();
 
         // 不为空
-        if (!string.IsNullOrEmpty(queryid))
-            return Results.Json(new
+        if (!string.IsNullOrEmpty(userid))
+        {
+            var notempty = FBConnectionFun.GetResponseBody(UReqCode.Success, new UserInfo()
             {
-                errorcode = 200,
-                errormsg = "ok",
-                data = new
-                {
-                    userid = queryid,
-                    username = "test",
-                    userage = 18
-                }
+                userid = userid,
+                username = "测试账号",
+                datetime = GatherFunc.NowDateTime()
             });
 
-        // 为空ß
-        return Results.Json(new
+            return Results.Json(notempty);
+        }
+
+        // 为空
+        var empty = FBConnectionFun.GetResponseBody(UReqCode.QueryEmpty, new UserInfo()
         {
-            errorcode = 1001,
-            errormsg = "data is null"
+            userid = userid,
+            datetime = GatherFunc.NowDateTime()
         });
+        return Results.Json(empty);
     }
 }

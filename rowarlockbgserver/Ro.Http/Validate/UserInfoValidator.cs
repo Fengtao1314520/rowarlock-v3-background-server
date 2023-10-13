@@ -10,6 +10,6 @@ public class UserInfoValidator : AbstractValidator<UserInfo>
 {
     public UserInfoValidator()
     {
-        RuleFor(x => x.UserId).NotEmpty();
+        RuleFor(x => x.userid).NotEmpty();
     }
 }
