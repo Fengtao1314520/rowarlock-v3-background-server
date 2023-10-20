@@ -4,9 +4,9 @@ namespace Ro.Basic.UType;
 /// 返回数据类型
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class ResponseType<T>
+public class ResponseType
 {
     public int rescode { get; set; }
     public string resmessage { get; set; }
-    public T resdata { get; set; }
+    public dynamic? resdata { get; set; }
 }

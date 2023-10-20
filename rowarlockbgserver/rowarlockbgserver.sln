@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ro.MidBridge", "Ro.MidBridg
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ro.Common", "Ro.Common\Ro.Common.csproj", "{BDA9B051-A4AA-4EAA-A8D2-6A43DCE5B08D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ro.EventHandle", "Ro.EventHandle\Ro.EventHandle.csproj", "{08937F45-EEF1-4E6D-B404-6D923489DB42}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +50,9 @@ Global
 		{BDA9B051-A4AA-4EAA-A8D2-6A43DCE5B08D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDA9B051-A4AA-4EAA-A8D2-6A43DCE5B08D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDA9B051-A4AA-4EAA-A8D2-6A43DCE5B08D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08937F45-EEF1-4E6D-B404-6D923489DB42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08937F45-EEF1-4E6D-B404-6D923489DB42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08937F45-EEF1-4E6D-B404-6D923489DB42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08937F45-EEF1-4E6D-B404-6D923489DB42}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

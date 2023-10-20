@@ -18,4 +18,30 @@ public abstract class JsonFunc
         T jsonobject = JsonConvert.DeserializeObject<T>(filestring)!;
         return jsonobject;
     }
+
+    /// <summary>
+    /// string转JSON对象
+    /// </summary>
+    /// <param name="jsonstring"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static T DeserialzeJsonObject<T>(string jsonstring)
+    {
+        // 反序列化
+        T jsonobject = JsonConvert.DeserializeObject<T>(jsonstring)!;
+        return jsonobject;
+    }
+
+    /// <summary>
+    /// JSON对象转string
+    /// </summary>
+    /// <param name="jsonobject"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static string SerializeJsonObject<T>(T jsonobject)
+    {
+        // 序列化
+        string jsonstring = JsonConvert.SerializeObject(jsonobject);
+        return jsonstring;
+    }
 }

@@ -8,7 +8,9 @@
 
 
     <ItemGroup>
+        <PackageReference Include="Centvrio.Emoji" Version="1.1.6"/>
         <PackageReference Include="Colorful.Console" Version="1.2.15"/>
+        <PackageReference Include="FluentValidation" Version="11.7.1"/>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
     </ItemGroup>
 

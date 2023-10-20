@@ -144,7 +144,7 @@ public class DatabaseEntrance : IDisposable
         try
         {
             // INFO 排序
-            Array.Sort(sqlfiles, new FileNameComparer());
+            Array.Sort(sqlfiles, new FileNameComparerFunc());
             // INFO 执行
             sqlfiles.ToList().ForEach(file =>
             {

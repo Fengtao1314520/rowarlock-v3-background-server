@@ -1,7 +1,13 @@
-namespace Ro.CrossPlatform.Extension;
+namespace Ro.CrossPlatform.Func;
 
-public class FileNameComparer : IComparer<FileInfo>
+public class FileNameComparerFunc : IComparer<FileInfo>
 {
+    /// <summary>
+    /// 比较文件名
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <returns></returns>
     public int Compare(FileInfo? x, FileInfo? y)
     {
         // 将文件名称按照 "." 进行分割

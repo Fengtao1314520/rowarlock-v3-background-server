@@ -3,11 +3,18 @@ using Ro.Basic.UType;
 
 namespace Ro.CrossPlatform.Func;
 
-public static class FBConnectionFun
+public static class ReqResFunc
 {
-    public static ResponseType<T> GetResponseBody<T>(UReqCode code, T data)
+    /// <summary>
+    /// 获取返回体
+    /// </summary>
+    /// <param name="code"></param>
+    /// <param name="data"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public static ResponseType GetResponseBody<T>(UReqCode code, T? data)
     {
-        var rt = new ResponseType<T>
+        ResponseType rt = new()
         {
             rescode = (int) code,
             resdata = data
@@ -46,5 +53,17 @@ public static class FBConnectionFun
         }
 
         return rt;
+    }
+
+
+    /// <summary>
+    /// 获取返回体
+    /// </summary>
+    /// <param name="code"></param>
+    /// <returns></returns>
+    public static ResponseType GetErrorResponseBody(UReqCode code)
+    {
+        var tempobj = new {datetime = GatherFunc.NowDateTime()};
+        return GetResponseBody(code, tempobj);
     }
 }
