@@ -1,7 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 using Newtonsoft.Json.Linq;
 using Ro.Basic;
-using Ro.Basic.UType;
 using Ro.CrossPlatform.Logs;
 using Ro.Basic.UEnum;
 using Ro.Basic.UType.ConfigInfoType;

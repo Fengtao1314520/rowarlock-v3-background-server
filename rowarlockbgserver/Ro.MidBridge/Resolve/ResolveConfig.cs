@@ -1,5 +1,4 @@
 using Newtonsoft.Json.Linq;
-using Ro.Basic.UType;
 using Ro.Basic.UType.ConfigInfoType;
 using Ro.CrossPlatform.Func;
 

@@ -1,6 +1,6 @@
 using Carter;
 using Microsoft.AspNetCore.Builder;
-using Ro.Basic.UType;
+using Microsoft.Extensions.Logging;
 using Ro.Basic.UType.ConfigInfoType;
 
 
@@ -39,6 +39,9 @@ public class HttpEntrance : IDisposable
 
         // 👇 Create the WebApplicationBuilder
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
+
+        // 关闭console log
+        builder.Logging.ClearProviders();
 
         // 👇 Add the required Carter services
         builder.Services.AddCarter();
