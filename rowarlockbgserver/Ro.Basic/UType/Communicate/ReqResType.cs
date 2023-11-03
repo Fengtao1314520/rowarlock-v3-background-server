@@ -1,4 +1,4 @@
-namespace Ro.Basic.UType;
+namespace Ro.Basic.UType.Communicate;
 
 /// <summary>
 /// 返回数据类型

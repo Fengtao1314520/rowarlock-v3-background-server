@@ -1,4 +1,4 @@
-namespace Ro.Basic.UType;
+namespace Ro.Basic.UType.Communicate;
 
 /// <summary>
 /// HTTP命令来了以后，需要输出

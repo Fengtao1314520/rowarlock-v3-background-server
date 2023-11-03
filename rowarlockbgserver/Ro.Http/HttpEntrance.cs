@@ -1,6 +1,7 @@
 using Carter;
 using Microsoft.AspNetCore.Builder;
 using Ro.Basic.UType;
+using Ro.Basic.UType.ConfigInfoType;
 
 
 namespace Ro.Http;

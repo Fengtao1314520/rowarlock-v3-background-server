@@ -1,6 +1,7 @@
 using Ro.Basic;
 using Ro.Basic.UEnum;
 using Ro.Basic.UType;
+using Ro.Basic.UType.Communicate;
 using Ro.Basic.UType.DataBase;
 using Ro.CrossPlatform.Func;
 using Ro.CrossPlatform.Logs;

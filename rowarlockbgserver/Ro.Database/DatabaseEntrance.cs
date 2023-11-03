@@ -4,6 +4,7 @@ using Ro.Basic;
 using Ro.Basic.UType;
 using Ro.CrossPlatform.Logs;
 using Ro.Basic.UEnum;
+using Ro.Basic.UType.ConfigInfoType;
 using Ro.CrossPlatform.Func;
 using Ro.Database.EntranceHandler;
 
