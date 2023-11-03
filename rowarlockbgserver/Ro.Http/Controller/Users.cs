@@ -6,11 +6,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Ro.Basic.UEnum;
 using Ro.Basic.UType;
-using Ro.Basic.UType.FBConnection;
-using Ro.CrossPlatform.Extension;
+using Ro.Basic.UType.DataBase;
+using Ro.CrossPlatform.Events.Webs;
 using Ro.CrossPlatform.Func;
 using Ro.CrossPlatform.Logs;
 using Ro.CrossPlatform.TemplateFunc;
+using Ro.CrossPlatform.Vaildator;
 
 namespace Ro.Http.Controller;
 
@@ -34,14 +35,14 @@ public class Users : TCarterModule, ICarterModule
     /// <param name="ctx"></param>
     /// <param name="userInfo"></param>
     /// <returns></returns>
-    private IResult UpdateUserInfo(HttpContext ctx, UserInfo userInfo)
+    private IResult UpdateUserInfo(HttpContext ctx, UserDetails userInfo)
     {
         // 设置返回类型
         ctx.Response.ContentType = "application/json";
         // 设置请求类型
         HOutObjType obj = new() {method = "post", api = "/api/upuserinfo", para = userInfo};
         // 验证
-        ResponseType result = RelatedFunc(obj, "userinfo", userInfo.userid, out LogStruct logStruct);
+        ResponseType result = RelatedFunc(obj, "userinfo", userInfo, out LogStruct logStruct);
         return Results.Json(result);
     }
 
@@ -53,13 +54,13 @@ public class Users : TCarterModule, ICarterModule
     /// <param name="userInfo"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    private IResult Login(HttpContext ctx, UserInfo userInfo)
+    private IResult Login(HttpContext ctx, UserDetails userInfo)
     {
         ctx.Response.ContentType = "application/json";
         // 设置请求类型
         HOutObjType obj = new() {method = "post", api = "/api/userlogin", para = userInfo};
         // 验证
-        ResponseType result = RelatedFunc(obj, "userlogin", userInfo.userid, out LogStruct logStruct);
+        ResponseType result = RelatedFunc(obj, "userlogin", userInfo, out LogStruct logStruct);
         return Results.Json(result);
     }
 
@@ -70,13 +71,13 @@ public class Users : TCarterModule, ICarterModule
     /// <param name="ctx"></param>
     /// <param name="userInfo"></param>
     /// <returns></returns>
-    private IResult Logout(HttpContext ctx, UserInfo userInfo)
+    private IResult Logout(HttpContext ctx, UserDetails userInfo)
     {
         ctx.Response.ContentType = "application/json";
         // 设置请求类型
         HOutObjType obj = new() {method = "post", api = "/api/userlogout", para = userInfo};
         // 验证
-        ResponseType result = RelatedFunc(obj, "userlogout", userInfo.userid, out LogStruct logStruct);
+        ResponseType result = RelatedFunc(obj, "userlogout", userInfo, out LogStruct logStruct);
         return Results.Json(result);
     }
 
@@ -117,38 +118,23 @@ public class Users : TCarterModule, ICarterModule
         logStruct.Init(true);
 
         // INFO 2: 验证
-        ValidationResult validationResult = (para as string).Vaildator();
+        GenericVaildator genericVaildator = new();
 
+        ValidationResult validationResult = genericVaildator.Validate(para as UserDetails);
+        ResponseType data;
         // INFO 3: 验证结果
         if (validationResult.IsValid)
-        {
-            // INFO 3.1 验证通过
-
-            //TODO: 3.1.1 根据请求类型，执行不同的操作
-            object data = new { };
-#if DEBUG
-            data = new UserInfo()
-            {
-                userid = (string) para,
-                username = "测试账号",
-                datetime = GatherFunc.NowDateTime()
-            };
-#endif
-            result = ReqResFunc.GetResponseBody(UReqCode.Success, data);
-        }
+            // INFO 3.1 根据请求类型，执行不同的操作
+            data = UserInfoEvent.OnBasicEvent(hOutObjType, para, ref logStruct) as ResponseType; //数据处理并返回结果
         else
-        {
-            // INFO 3.2 验证未通过
-            // 未通过验证
-            UserInfo empty = new() {datetime = GatherFunc.NowDateTime()};
-            // 设置返回类型，错误的，直接给个空的
-            result = ReqResFunc.GetErrorResponseBody(UReqCode.ParaEmpty);
-        }
+            // INFO 3.2 验证未通过  设置返回类型，错误的，直接给个空的
+            data = ReqResFunc.GetErrorResponseBody(UReqCode.ParaEmpty);
 
         // INFO 3.3 日志输出
-        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        ExtraLog.GenerateSystemFormatLog(data, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
 
-        return result;
+        // INFO 4: 返回结果
+        return data;
     }
 }

@@ -21,7 +21,6 @@ public static class KeyValueTypeListExt
         return sb.ToString().Remove(sb.ToString().Length - 1, 1);
     }
 
-
     /// <summary>
     /// 获取值
     /// 转为字符串，符合sql语法

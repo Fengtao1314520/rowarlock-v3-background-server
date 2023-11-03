@@ -1,12 +1,9 @@
 using Ro.Database.Util;
 
 namespace Ro.Database.Dependent;
-/***
- * 方法聚合类，聚合Util的各类方法，毕竟都是针对table进行操作
- */
 
 /// <summary>
-/// 聚合类
+///* 方法聚合类，聚合Util的各类方法，毕竟都是针对table进行操作
 /// </summary>
 public static class Polymerization
 {

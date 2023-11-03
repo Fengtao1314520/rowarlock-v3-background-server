@@ -1,11 +1,11 @@
 ﻿using Microsoft.Data.Sqlite;
 using Newtonsoft.Json.Linq;
+using Ro.Basic;
 using Ro.Basic.UType;
 using Ro.CrossPlatform.Logs;
 using Ro.Basic.UEnum;
-using Ro.CrossPlatform.Extension;
 using Ro.CrossPlatform.Func;
-using Ro.Database.Controller;
+using Ro.Database.EntranceHandler;
 
 namespace Ro.Database;
 
@@ -19,22 +19,12 @@ public class DatabaseEntrance : IDisposable
     /// </summary>
     private readonly DataBaseInfoType _dataBaseInfoType;
 
-    /// <summary>
-    /// 数据库链接
-    /// </summary>
-    private SqliteConnection _sqliteConnection;
-
-    /// <summary>
-    ///  数据库表控制器
-    /// </summary>
-    private TableController _tableController;
-
-    private ExecuteFileController _executeFileController;
 
     /// <summary>
     /// 数据库状态
+    /// null代表发生错误
     /// </summary>
-    public bool DatabaseStatus { get; private set; }
+    public bool? Status { get; private set; }
 
     #region 构造函数
 
@@ -43,14 +33,9 @@ public class DatabaseEntrance : IDisposable
     /// </summary>
     public DatabaseEntrance(DataBaseInfoType dataBaseInfoType)
     {
-        // 初始化
+        // 初始化, 强制赋值
         _dataBaseInfoType = dataBaseInfoType;
-        _sqliteConnection = null!;
-        _tableController = null!;
-        _executeFileController = null!;
-
-        // 数据库前置操作
-        CheckDatabaseFile(_dataBaseInfoType);
+        Status = null;
     }
 
     #endregion
@@ -68,21 +53,15 @@ public class DatabaseEntrance : IDisposable
         string connectionString = $"Data Source = {_dataBaseInfoType.Path}";
         try
         {
-            _sqliteConnection = new SqliteConnection(connectionString);
-            _sqliteConnection.Open();
+            ComArgs.SqliteConnection = new SqliteConnection(connectionString);
+            ComArgs.SqliteConnection.Open();
             LogCore.Log("数据库连接成功", UOutLevel.SUCCESS);
-
-            // INFO: 赋值
-            _tableController = new TableController(_sqliteConnection);
-            _executeFileController = new ExecuteFileController(_sqliteConnection);
-
-            DatabaseStatus = true;
+            Status = true;
         }
         catch (Exception e)
         {
             LogCore.Log($"数据库连接失败, {e.Message}", UOutLevel.ERROR);
-
-            DatabaseStatus = false;
+            Status = false;
         }
 
         return this;
@@ -93,7 +72,7 @@ public class DatabaseEntrance : IDisposable
     /// </summary>
     public DatabaseEntrance DisconnectDb()
     {
-        _sqliteConnection.Close();
+        ComArgs.SqliteConnection.Close();
         return this;
     }
 
@@ -103,12 +82,50 @@ public class DatabaseEntrance : IDisposable
     /// </summary>
     public void Dispose()
     {
-        _sqliteConnection.Dispose();
+        ComArgs.SqliteConnection.Dispose();
     }
 
     #endregion
 
     #region 公有方法
+
+    /// <summary>
+    /// 检查数据库文件
+    /// </summary>
+    public void CheckDatabaseFile()
+    {
+        string dbfilepath = _dataBaseInfoType.Path;
+        // 如果文件不存在,则创建一个新的数据库文件
+        if (File.Exists(dbfilepath))
+        {
+            LogCore.Success("系统已检测到数据库文件");
+            Status = true;
+        }
+        else
+        {
+            // INFO: 创建数据库文件，(如果不存在）
+            try
+            {
+                LogCore.Warn("系统未检测到数据库,将重新新建数据库文件");
+                string dpath = Path.GetDirectoryName(dbfilepath)!;
+                // 创建文件夹
+                Directory.CreateDirectory(dpath);
+                // 创建文件
+                FileStream filestream = File.Create(dbfilepath);
+                // UPDATE: 释放资源
+                filestream.Close();
+                filestream.Dispose();
+                LogCore.Success("系统创建数据库成功");
+                Status = null;
+            }
+            catch (Exception e)
+            {
+                LogCore.Exception($"系统重建数据库失败, {e.Message}");
+                Status = false;
+            }
+        }
+    }
+
 
     /// <summary>
     /// 初始化数据库
@@ -119,17 +136,27 @@ public class DatabaseEntrance : IDisposable
     /// <returns></returns>
     public void InitDatabase(JObject version)
     {
-        string tablepath = _dataBaseInfoType.TablePath;
-        LogCore.Info("系统数据库初始化,请稍等...");
-        var tableJobjectArray = JsonFunc.ReturnJsonObjectByFile<List<JObject>>(tablepath);
-        // 检查各表是否完整
-        CheckDbTableComplete(tableJobjectArray);
-        // 输出日志
-        LogCore.Info($"数据表检测完毕,结果:{DatabaseStatus}");
-        // 更新版本号
-        UpdateDatabaseVersion(version);
-        // 输出日志
-        LogCore.Info($"数据库初始化完毕,结果:{DatabaseStatus}");
+        try
+        {
+            string tablepath = _dataBaseInfoType.TablePath;
+            LogCore.Info("系统数据库初始化,请稍等...");
+            // 读取数据表JSON
+            var tableJobjectArray = JsonFunc.ReturnJsonObjectByFile<List<JObject>>(tablepath);
+            // 初始化数据库表
+            InitDatabaseTable(tableJobjectArray);
+            // 输出日志
+            LogCore.Info($"数据表检测完毕,结果:{Status}");
+            // 更新版本号
+            UpdateDatabaseVersion(version);
+            // 输出日志
+            LogCore.Info($"数据库初始化完毕,结果:{Status}");
+            Status = true;
+        }
+        catch (Exception e)
+        {
+            LogCore.Exception($"系统数据库初始化失败, {e.Message}");
+            Status = false;
+        }
     }
 
 
@@ -150,12 +177,15 @@ public class DatabaseEntrance : IDisposable
             {
                 string name = file.Name;
                 LogCore.Log($"系统正在读取{name}的内容,即将执行...", UOutLevel.INFO);
-                _executeFileController.ExecuteFileCommands(file);
+                TableHandler.ExecuteFileCommands(file);
             });
+            LogCore.Success("系统数据库更新成功");
+            Status = true;
         }
         catch (Exception e)
         {
             LogCore.Exception($"系统数据库更新失败, {e.Message}");
+            Status = false;
         }
     }
 
@@ -165,49 +195,10 @@ public class DatabaseEntrance : IDisposable
     #region 私有方法
 
     /// <summary>
-    /// 检查数据库文件
-    /// </summary>
-    /// <param name="dataBaseInfoType"></param>
-    private void CheckDatabaseFile(DataBaseInfoType dataBaseInfoType)
-    {
-        string dbfilepath = dataBaseInfoType.Path;
-        // 如果文件不存在,则创建一个新的数据库文件
-        if (File.Exists(dbfilepath))
-        {
-            LogCore.Success("系统已检测到数据库文件");
-            DatabaseStatus = true;
-        }
-        else
-        {
-            // INFO: 创建数据库文件，(如果不存在）
-            try
-            {
-                LogCore.Warn("系统未检测到数据库,将重新新建数据库文件");
-                string dpath = Path.GetDirectoryName(dbfilepath)!;
-                // 创建文件夹
-                Directory.CreateDirectory(dpath);
-                // 创建文件
-                FileStream filestream = File.Create(dbfilepath);
-                // UPDATE: 释放资源
-                filestream.Close();
-                filestream.Dispose();
-                LogCore.Success("系统创建数据库成功");
-                DatabaseStatus = true;
-            }
-            catch (Exception e)
-            {
-                LogCore.Exception($"系统重建数据库失败, {e.Message}");
-                DatabaseStatus = false;
-            }
-        }
-    }
-
-
-    /// <summary>
-    /// 检查数据库表是否完整
+    /// 初始化数据库表
     /// </summary>
     /// <param name="tableJobjectArray"></param>
-    private void CheckDbTableComplete(List<JObject> tableJobjectArray)
+    private void InitDatabaseTable(List<JObject> tableJobjectArray)
     {
         LogCore.Info($"正在检测数据表是否完整...");
         try
@@ -216,19 +207,16 @@ public class DatabaseEntrance : IDisposable
             tableJobjectArray.ForEach(element =>
             {
                 string tablename = element["name"]!.ToString(); //获取表名称
-                bool isexist = _tableController.CheckTableExist(tablename);
+                bool isexist = TableHandler.CheckTableExist(tablename);
                 if (isexist) return;
                 LogCore.Success($"系统未检测到数据表, 创建数据表:'{tablename}' 成功");
                 //根据表名执行创建
-                _tableController.CreateTableByName(element);
+                TableHandler.CreateTableByName(element);
             });
-
-            DatabaseStatus = true;
         }
         catch (Exception e)
         {
             LogCore.Exception($"创建数据表失败, {e.Message}");
-            DatabaseStatus = false;
         }
     }
 
@@ -241,13 +229,12 @@ public class DatabaseEntrance : IDisposable
         try
         {
             //根据表名执行创建
-            _tableController.ReplaceTableByName("ro_version", version, "name");
+            TableHandler.ReplaceTableByName("ro_version", version, "name");
             LogCore.Success("更新version表成功");
         }
         catch (Exception e)
         {
             LogCore.Exception($"更新version表失败, {e.Message}");
-            DatabaseStatus = false;
         }
     }
 

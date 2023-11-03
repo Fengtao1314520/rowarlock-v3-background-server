@@ -2,6 +2,7 @@ using Newtonsoft.Json.Linq;
 using Ro.Basic.UType;
 using Ro.CrossPlatform.Logs;
 using Ro.Database;
+using Ro.EventHandle;
 using Ro.Http;
 using Ro.MidBridge.Resolve;
 
@@ -16,12 +17,12 @@ public class MainEntrance : IDisposable
     /// <summary>
     /// 基础配置文件json路径
     /// </summary>
-    private readonly string _configpath = @"./ServerResource/config.json";
+    private const string Configpath = @"./ServerResource/config.json";
 
     /// <summary>
     /// SQL文件的文件夹路径
     /// </summary>
-    private readonly string _sqlfolder = @"./ServerResource/sqls";
+    private const string Sqlfolder = @"./ServerResource/sqls";
 
     #endregion
 
@@ -37,10 +38,7 @@ public class MainEntrance : IDisposable
     /// </summary>
     private HttpEntrance _httpEntrance;
 
-    /// <summary>
-    /// 解析配置
-    /// </summary>
-    private readonly ResolveConfig _resolveConfig;
+    private EventHandleEntrance _eventHandleEntrance;
 
     #endregion
 
@@ -52,7 +50,7 @@ public class MainEntrance : IDisposable
         // INFO: 赋值
         _databaseEntrance = null!;
         _httpEntrance = null!;
-        _resolveConfig = new ResolveConfig();
+        _eventHandleEntrance = new EventHandleEntrance();
     }
 
     #region 对外方法
@@ -63,13 +61,16 @@ public class MainEntrance : IDisposable
     public MainEntrance Start()
     {
         // config的JObject
-        JObject configJObject = _resolveConfig.ResolveConfigToJObject(_configpath);
+        JObject configJObject = ResolveConfig.ResolveConfigToJObject(Configpath);
         // info 1. 打开数据库
         StartDatabase(configJObject);
         // info 2. 读取sql文件夹，并更新
         UpdateSql();
         // info 3.打开网络服务
         StartHttpServer(configJObject);
+
+        // info 4. 加载事件
+        _eventHandleEntrance.LoadEvents();
         return this;
     }
 
@@ -79,6 +80,9 @@ public class MainEntrance : IDisposable
     public MainEntrance Stop()
     {
         _databaseEntrance.DisconnectDb();
+
+        // info 4. 卸载事件
+        _eventHandleEntrance.UnLoadEvents();
         return this;
     }
 
@@ -105,22 +109,18 @@ public class MainEntrance : IDisposable
     private void StartDatabase(JObject configJObject)
     {
         // 数据库信息类型 属性
-        DataBaseInfoType dataBaseInfoType = _resolveConfig.ResolveDataBaseInfoType(configJObject);
-        // 解析数据库配置
+        DataBaseInfoType dataBaseInfoType = ResolveConfig.ResolveDataBaseInfoType(configJObject);
+        // 初始化数据库配置
         _databaseEntrance = new DatabaseEntrance(dataBaseInfoType);
-        Status = _databaseEntrance.DatabaseStatus;
-        if (Status)
-        {
-            JObject version = configJObject["version"]!.ToObject<JObject>()!;
-            // 连接数据库，并初始化,并更新版本号
-            _databaseEntrance.ConnectDb().InitDatabase(version);
-            // 更新状态
-            Status = _databaseEntrance.DatabaseStatus;
-        }
-        else
-        {
-            Status = false;
-        }
+        // info: 检查数据库
+        _databaseEntrance.CheckDatabaseFile();
+        // info: 新建更新数据库
+        JObject version = configJObject["version"]!.ToObject<JObject>()!;
+        // 连接数据库，并初始化,并更新版本号
+        _databaseEntrance.ConnectDb().InitDatabase(version);
+        // 更新状态
+        if (_databaseEntrance.Status != null)
+            Status = _databaseEntrance.Status.Value;
     }
 
 
@@ -129,13 +129,13 @@ public class MainEntrance : IDisposable
     /// </summary>
     private void UpdateSql()
     {
-        if (!Directory.Exists(_sqlfolder))
+        if (!Directory.Exists(Sqlfolder))
         {
             LogCore.Info("未找到SQL文件夹, 跳过更新");
             return;
         }
 
-        DirectoryInfo directoryInfo = new(_sqlfolder);
+        DirectoryInfo directoryInfo = new(Sqlfolder);
         //判断文件夹内是否有文件
         if (directoryInfo.GetFiles().Length == 0)
         {
@@ -147,7 +147,9 @@ public class MainEntrance : IDisposable
         var sqlfiles = directoryInfo.GetFiles();
         //更新数据库
         _databaseEntrance.UpdateByFile(sqlfiles);
-        Status = true;
+        // 更新状态
+        if (_databaseEntrance.Status != null)
+            Status = _databaseEntrance.Status.Value;
     }
 
 
@@ -158,7 +160,7 @@ public class MainEntrance : IDisposable
     private void StartHttpServer(JObject configJObject)
     {
         // 数据库信息类型 属性
-        HttpServerType httpServerType = _resolveConfig.ResolveHttpServerType(configJObject);
+        HttpServerType httpServerType = ResolveConfig.ResolveHttpServerType(configJObject);
         // 初始化http服务
         _httpEntrance = new HttpEntrance(httpServerType);
 

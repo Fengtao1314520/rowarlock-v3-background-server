@@ -10,6 +10,7 @@
         <ProjectReference Include="..\Ro.Basic\Ro.Basic.csproj"/>
         <ProjectReference Include="..\Ro.CrossPlatform\Ro.CrossPlatform.csproj"/>
         <ProjectReference Include="..\Ro.Database\Ro.Database.csproj"/>
+        <ProjectReference Include="..\Ro.EventHandle\Ro.EventHandle.csproj"/>
         <ProjectReference Include="..\Ro.Http\Ro.Http.csproj"/>
     </ItemGroup>
 

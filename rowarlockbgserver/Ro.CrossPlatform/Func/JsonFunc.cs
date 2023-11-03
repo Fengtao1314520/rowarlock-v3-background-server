@@ -15,7 +15,7 @@ public abstract class JsonFunc
         // 读取文件
         string filestring = File.ReadAllText(filepath);
         // 反序列化
-        T jsonobject = JsonConvert.DeserializeObject<T>(filestring)!;
+        T jsonobject = DeserialzeJsonObject<T>(filestring)!;
         return jsonobject;
     }
 

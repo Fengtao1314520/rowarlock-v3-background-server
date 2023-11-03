@@ -1,44 +1,26 @@
 using System.Text;
-using Microsoft.Data.Sqlite;
 using Newtonsoft.Json.Linq;
+using Ro.Basic;
 using Ro.Basic.UEnum;
 using Ro.Basic.UType;
 using Ro.CrossPlatform.Extension;
 using Ro.CrossPlatform.Logs;
 using Ro.Database.Dependent;
 
+namespace Ro.Database.EntranceHandler;
 
-namespace Ro.Database.Controller;
-
-public class TableController
+public abstract class TableHandler
 {
-    /// <summary>
-    /// 数据库连接
-    /// 赋值
-    /// </summary>
-    private readonly SqliteConnection _sqliteConnection;
-
-    /// <summary>
-    /// 构造函数
-    /// </summary>
-    /// <param name="sqliteConnection"></param>
-    public TableController(SqliteConnection sqliteConnection)
-    {
-        //赋值
-        _sqliteConnection = sqliteConnection;
-    }
-
-
     /// <summary>
     /// 检查数据表是否存在
     /// </summary>
     /// <param name="tablename">表名</param>
     /// <returns></returns>
-    public bool CheckTableExist(string tablename)
+    public static bool CheckTableExist(string tablename)
     {
         try
         {
-            return Polymerization.TableUtil.ExistTable(_sqliteConnection, tablename);
+            return Polymerization.TableUtil.ExistTable(ComArgs.SqliteConnection, tablename);
         }
         catch (Exception e)
         {
@@ -51,7 +33,7 @@ public class TableController
     /// 根据表名，创建表和字段
     /// </summary>
     /// <param name="jobject">单个json对象</param>
-    public void CreateTableByName(JObject jobject)
+    public static void CreateTableByName(JObject jobject)
     {
         JToken name = jobject["name"]!;
         JArray jArray = JArray.Parse(jobject["field"]!.ToString());
@@ -71,7 +53,7 @@ public class TableController
         LogCore.Log(command, UOutLevel.DEBUG);
 #endif
         //执行创建table
-        Polymerization.TableUtil.CreateTable(_sqliteConnection, name.ToString(), command);
+        Polymerization.TableUtil.CreateTable(ComArgs.SqliteConnection, name.ToString(), command);
     }
 
 
@@ -81,7 +63,7 @@ public class TableController
     /// <param name="tabname"></param>
     /// <param name="jobject"></param>
     /// <param name="fieldkey"></param>
-    public void ReplaceTableByName(string tabname, JObject jobject, string fieldkey)
+    public static void ReplaceTableByName(string tabname, JObject jobject, string fieldkey)
     {
         var keyValueTypeList = jobject.ToKeyValueTypeList();
         // keys
@@ -96,16 +78,33 @@ public class TableController
         if (findkv is null) return;
 
         // 查询字段对应数据是否存在
-        int count = Polymerization.SelectUtil.SelectDataCount(_sqliteConnection, tabname, findkv.Key,
+        int count = Polymerization.SelectUtil.SelectDataCount(ComArgs.SqliteConnection, tabname, findkv.Key,
             findkv.Value.ToString()!);
 
         //小于1 说明不存在
         if (count < 1)
             // 插入数据
-            Polymerization.InsertUtil.InsertDataWithField(_sqliteConnection, tabname, keys, values);
+            Polymerization.InsertUtil.InsertDataWithField(ComArgs.SqliteConnection, tabname, keys, values);
         else
             // 更新数据
-            Polymerization.UpdateUtil.UpdateDataWithCondition(_sqliteConnection, tabname, sqlstring,
+            Polymerization.UpdateUtil.UpdateDataWithCondition(ComArgs.SqliteConnection, tabname, sqlstring,
                 $"{fieldkey} = '{findkv.Value}'");
+    }
+
+
+    /// <summary>
+    /// 执行文件的命令列
+    /// </summary>
+    /// <param name="fileInfo"></param>
+    public static void ExecuteFileCommands(FileInfo fileInfo)
+    {
+        //string name = fileInfo.Name;
+        StreamReader read = fileInfo.OpenText();
+        // 从文件读取并显示行，直到文件的末尾
+        while (read.ReadLine() is { } line)
+            if (!string.IsNullOrEmpty(line))
+                Polymerization.NudeExecuteUtil.NudeExecute(ComArgs.SqliteConnection, line);
+        read.Close();
+        read.Dispose();
     }
 }
