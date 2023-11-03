@@ -121,20 +121,19 @@ public class Users : TCarterModule, ICarterModule
         GenericVaildator genericVaildator = new();
 
         ValidationResult validationResult = genericVaildator.Validate(para as UserDetails);
-        ResponseType data;
         // INFO 3: 验证结果
         if (validationResult.IsValid)
             // INFO 3.1 根据请求类型，执行不同的操作
-            data = UserInfoEvent.OnBasicEvent(hOutObjType, para, ref logStruct) as ResponseType; //数据处理并返回结果
+            result = UserInfoEvent.OnBasicEvent(hOutObjType, para, ref logStruct) as ResponseType; //数据处理并返回结果
         else
             // INFO 3.2 验证未通过  设置返回类型，错误的，直接给个空的
-            data = ReqResFunc.GetErrorResponseBody(UReqCode.ParaEmpty);
+            result = ReqResFunc.GetErrorResponseBody(UReqCode.ParaEmpty);
 
         // INFO 3.3 日志输出
-        ExtraLog.GenerateSystemFormatLog(data, ref logStruct); //结果输出
+        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
 
         // INFO 4: 返回结果
-        return data;
+        return result;
     }
 }

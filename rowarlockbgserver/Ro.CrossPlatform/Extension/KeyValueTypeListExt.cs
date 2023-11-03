@@ -1,5 +1,6 @@
 using System.Text;
 using Ro.Basic.UType;
+using Ro.Basic.UType.Adapter;
 
 namespace Ro.CrossPlatform.Extension;
 

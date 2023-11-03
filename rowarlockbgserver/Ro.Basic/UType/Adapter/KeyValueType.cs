@@ -1,4 +1,4 @@
-namespace Ro.Basic.UType;
+namespace Ro.Basic.UType.Adapter;
 
 public class KeyValueType
 {

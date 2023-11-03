@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using Ro.Basic;
 using Ro.Basic.UEnum;
 using Ro.Basic.UType;
+using Ro.Basic.UType.Adapter;
 using Ro.CrossPlatform.Extension;
 using Ro.CrossPlatform.Logs;
 using Ro.Database.Dependent;
