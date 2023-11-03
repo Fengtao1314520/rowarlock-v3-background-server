@@ -1,12 +1,14 @@
-using FluentValidation;
-using Ro.Basic.UType.DataBase;
-
 namespace Ro.CrossPlatform.Vaildator;
 
-public class GenericVaildator : AbstractValidator<UserDetails>
+public static class GenericVaildator
 {
-    public GenericVaildator()
+    public static bool IsValid { get; private set; }
+
+    public static void Vailidation(dynamic tobj, Type compareType)
     {
-        RuleFor(x => x).Must(x => !string.IsNullOrEmpty(x.Id));
+        // 对比 tobj的类型和ttype
+        Type origintype = tobj.GetType();
+
+        IsValid = origintype == compareType;
     }
 }

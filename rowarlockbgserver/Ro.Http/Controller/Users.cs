@@ -42,7 +42,7 @@ public class Users : TCarterModule, ICarterModule
         // 设置请求类型
         HOutObjType obj = new() {method = "post", api = "/api/upuserinfo", para = userInfo};
         // 验证
-        ResponseType result = RelatedFunc(obj, "userinfo", userInfo, out LogStruct logStruct);
+        ResponseType result = RelatedFunc(obj, "upuserinfo", userInfo, out LogStruct logStruct);
         return Results.Json(result);
     }
 
@@ -96,7 +96,7 @@ public class Users : TCarterModule, ICarterModule
         // 设置请求类型
         HOutObjType obj = new() {method = "get", api = "/api/userinfo", para = allQuery};
         // 验证
-        ResponseType result = RelatedFunc(obj, "userlogout", userid, out LogStruct logStruct);
+        ResponseType result = RelatedFunc(obj, "getuserinfo", userid, out LogStruct logStruct);
         return Results.Json(result);
     }
 
@@ -118,22 +118,21 @@ public class Users : TCarterModule, ICarterModule
         logStruct.Init(true);
 
         // INFO 2: 验证
-        GenericVaildator genericVaildator = new();
+        GenericVaildator.Vailidation(para, typeof(UserDetails));
 
-        ValidationResult validationResult = genericVaildator.Validate(para as UserDetails);
         // INFO 3: 验证结果
-        if (validationResult.IsValid)
+        if (GenericVaildator.IsValid)
             // INFO 3.1 根据请求类型，执行不同的操作
             result = UserInfoEvent.OnBasicEvent(hOutObjType, para, ref logStruct) as ResponseType; //数据处理并返回结果
         else
             // INFO 3.2 验证未通过  设置返回类型，错误的，直接给个空的
             result = ReqResFunc.GetErrorResponseBody(UReqCode.ParaEmpty);
 
-        // INFO 3.3 日志输出
+        // INFO 4: 日志输出
         ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
 
-        // INFO 4: 返回结果
+        // INFO 5: 返回结果
         return result;
     }
 }
