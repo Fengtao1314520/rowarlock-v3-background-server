@@ -14,7 +14,7 @@ public static class UserInfoEvent
         return BasicEvent.Invoke(houtobj, para, ref logstruct);
     }
 
-    public static object OnGetInfoEvent(HOutObjType houtobj, string para, ref LogStruct logstruct)
+    public static ResponseType OnGetInfoEvent(HOutObjType houtobj, string para, ref LogStruct logstruct)
     {
         return GetInfoEvent.Invoke(houtobj, para, ref logstruct);
     }

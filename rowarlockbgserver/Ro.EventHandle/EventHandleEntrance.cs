@@ -21,10 +21,12 @@ public class EventHandleEntrance
     public void LoadEvents()
     {
         UserInfoEvent.BasicEvent += _userInfoEventHandle.OnBasic;
+        UserInfoEvent.GetInfoEvent += _userInfoEventHandle.OnGetInfo;
     }
 
     public void UnLoadEvents()
     {
         UserInfoEvent.BasicEvent -= _userInfoEventHandle.OnBasic;
+        UserInfoEvent.GetInfoEvent -= _userInfoEventHandle.OnGetInfo;
     }
 }

@@ -22,7 +22,6 @@ public class UserInfoEventHandle
     {
         // 参数实例化
         UserDetails userDetails = (UserDetails) para;
-
         // 执行
         using var dborm = new DBORM<UserDetails>(ComArgs.SqliteConnection, userDetails);
         int result = dborm.Update();
@@ -30,5 +29,19 @@ public class UserInfoEventHandle
 
         // 设置返回类型，失败的,设置返回类型，成功的
         return ReqResFunc.GetResponseBody(result > 0 ? UReqCode.Success : UReqCode.Fail, result);
+    }
+
+    public ResponseType OnGetInfo(HOutObjType houtobj, object para, ref LogStruct logstruct)
+    {
+        // 参数实例化
+        UserDetails userDetails = new()
+        {
+            Id = (string) para
+        };
+        // 执行
+        using var dborm = new DBORM<UserDetails>(ComArgs.SqliteConnection, userDetails);
+        var result = dborm.Query();
+        dborm.Dispose(); //GC释放
+        return ReqResFunc.GetResponseBody(result.Count > 0 ? UReqCode.Success : UReqCode.Fail, result);
     }
 }

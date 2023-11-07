@@ -97,6 +97,9 @@ public class Users : TCarterModule, ICarterModule
         HOutObjType obj = new() {method = "get", api = "/api/userinfo", para = allQuery};
         // 验证
         ResponseType result = RelatedFunc(obj, "getuserinfo", userid, out LogStruct logStruct);
+        // INFO 4: 日志输出
+        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        OutLogStruct.Out(logStruct);
         return Results.Json(result);
     }
 
@@ -117,10 +120,14 @@ public class Users : TCarterModule, ICarterModule
         logStruct = new LogStruct();
         logStruct.Init(true);
 
-        // INFO 2: 验证
+        // INFO 2: 验证类型
         if (apitype == "getuserinfo")
         {
-            // todo: 
+            // todo:
+            string? userid = para as string;
+            if (!string.IsNullOrEmpty(userid))
+                //不为空
+                result = UserInfoEvent.OnGetInfoEvent(hOutObjType, userid, ref logStruct);
         }
         else
         {
@@ -136,10 +143,6 @@ public class Users : TCarterModule, ICarterModule
                 false => ReqResFunc.GetErrorResponseBody(UReqCode.ParaEmpty)
             };
         }
-
-        // INFO 4: 日志输出
-        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
-        OutLogStruct.Out(logStruct);
 
         // INFO 5: 返回结果
         return result;

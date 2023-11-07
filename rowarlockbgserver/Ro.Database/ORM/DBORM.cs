@@ -219,16 +219,38 @@ public class DBORM<T> : IDisposable, IAsyncDisposable
         Polymerization.DeleteUtil.DeleteData(_sqliteConnection, _tableName, deleteData);
     }
 
+
+    /// <summary>
+    /// 根据主键查询数据
+    /// </summary>
+    public List<Dictionary<string, object>> Query()
+    {
+        return Query(_keyName, _keyValue);
+    }
+
+
+    /// <summary>
+    /// 根据给定key和value查询数据
+    /// </summary>
+    /// <param name="key">查询字段名</param>
+    /// <param name="value">查询字段值</param>
+    public List<Dictionary<string, object>> Query(string key, object value)
+    {
+        string condition = $"{key} = '{value}'";
+        var result = Polymerization.SelectUtil.SelectDataToDictList(_sqliteConnection, _tableName, "*", condition);
+        return result;
+    }
+
     #endregion
 
 
     public void Dispose()
     {
-        _sqliteConnection.Dispose();
+        //_sqliteConnection.Dispose();
     }
 
     public async ValueTask DisposeAsync()
     {
-        await _sqliteConnection.DisposeAsync();
+        //await _sqliteConnection.DisposeAsync();
     }
 }
