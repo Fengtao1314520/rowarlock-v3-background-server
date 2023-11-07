@@ -111,22 +111,31 @@ public class Users : TCarterModule, ICarterModule
         out LogStruct logStruct)
     {
         // 返回类型结果
-        ResponseType result;
+        ResponseType result = new();
 
         // INFO 1: 日志初始化
         logStruct = new LogStruct();
         logStruct.Init(true);
 
         // INFO 2: 验证
-        GenericVaildator.Vailidation(para, typeof(UserDetails));
-
-        // INFO 3: 验证结果
-        if (GenericVaildator.IsValid)
-            // INFO 3.1 根据请求类型，执行不同的操作
-            result = UserInfoEvent.OnBasicEvent(hOutObjType, para, ref logStruct) as ResponseType; //数据处理并返回结果
+        if (apitype == "getuserinfo")
+        {
+            // todo: 
+        }
         else
-            // INFO 3.2 验证未通过  设置返回类型，错误的，直接给个空的
-            result = ReqResFunc.GetErrorResponseBody(UReqCode.ParaEmpty);
+        {
+            // info: 验证
+            GenericVaildator genericVaildator = new(typeof(UserDetails), "Id");
+            ValidationResult valid = genericVaildator.Validate(para);
+
+            result = valid.IsValid switch
+            {
+                // INFO 3: 验证结果
+                // INFO 3.1 根据请求类型，执行不同的操作
+                true => UserInfoEvent.OnBasicEvent(hOutObjType, para, ref logStruct), //数据处理并返回结果
+                false => ReqResFunc.GetErrorResponseBody(UReqCode.ParaEmpty)
+            };
+        }
 
         // INFO 4: 日志输出
         ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出

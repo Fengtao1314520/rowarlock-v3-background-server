@@ -6,14 +6,17 @@ namespace Ro.Basic.UType.DataBase;
 [Serializable]
 public class UserDetails
 {
-    [FieldAttrs("id", "TEXT", "用户id, 主键")] public string Id { get; set; }
+    [FieldAttrs("id", "TEXT", "用户id, 主键")]
+    public string Id { get; set; }
 
-    [FieldAttrs("uname", "TEXT", "用户名")] public string Uname { get; set; }
+    [FieldAttrs("uname", "TEXT", "用户名")]
+    public string Uname { get; set; }
 
     [FieldAttrs("unickname", "TEXT", "用户昵称")]
     public string Unickname { get; set; }
 
-    [FieldAttrs("upsd", "TEXT", "用户密码")] public string Upsd { get; set; }
+    [FieldAttrs("upsd", "TEXT", "用户密码")]
+    public string Upsd { get; set; }
 
     [FieldAttrs("uemail", "TEXT", "用户注册用的邮箱")]
     public string Uemail { get; set; }

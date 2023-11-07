@@ -18,19 +18,17 @@ public class UserInfoEventHandle
     /// <param name="para"></param>
     /// <param name="logstruct"></param>
     /// <returns></returns>
-    public object OnBasic(HOutObjType houtobj, object para, ref LogStruct logstruct)
+    public ResponseType OnBasic(HOutObjType houtobj, object para, ref LogStruct logstruct)
     {
         // 参数实例化
         UserDetails userDetails = (UserDetails) para;
 
+        // 执行
         using var dborm = new DBORM<UserDetails>(ComArgs.SqliteConnection, userDetails);
         int result = dborm.Update();
+        dborm.Dispose(); //GC释放
 
-        // 设置返回类型，失败的
-        return ReqResFunc.GetResponseBody(result > 0
-            ?
-            // 设置返回类型，成功的
-            UReqCode.Success
-            : UReqCode.Fail, result);
+        // 设置返回类型，失败的,设置返回类型，成功的
+        return ReqResFunc.GetResponseBody(result > 0 ? UReqCode.Success : UReqCode.Fail, result);
     }
 }

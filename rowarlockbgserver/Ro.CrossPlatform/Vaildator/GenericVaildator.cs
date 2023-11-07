@@ -1,14 +1,26 @@
+using FluentValidation;
+
 namespace Ro.CrossPlatform.Vaildator;
 
-public static class GenericVaildator
+/// <summary>
+/// 通用性验证
+/// </summary>
+public class GenericVaildator : AbstractValidator<object>
 {
-    public static bool IsValid { get; private set; }
-
-    public static void Vailidation(dynamic tobj, Type compareType)
+    /// <summary>
+    /// 构造函数
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="keyName"></param>
+    public GenericVaildator(Type type, string keyName)
     {
-        // 对比 tobj的类型和ttype
-        Type origintype = tobj.GetType();
-
-        IsValid = origintype == compareType;
+        // 1. 验证是否为空
+        RuleFor(x => x).Must(x => x != null);
+        // 2. 验证类型
+        RuleFor(x => x.GetType()).Equal(type);
+        //3. 验证keyName属性不为空
+        RuleFor(x => x.GetType().GetProperty(keyName)).NotEmpty();
+        //4. 验证KeyName属性的值不为空
+        RuleFor(x => x.GetType().GetProperty(keyName)!.GetValue(x)).NotEmpty();
     }
 }
