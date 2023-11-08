@@ -19,7 +19,6 @@ public class DatabaseEntrance : IDisposable
     /// </summary>
     private readonly DataBaseInfoType _dataBaseInfoType;
 
-
     /// <summary>
     /// 数据库状态
     /// null代表发生错误
@@ -172,14 +171,40 @@ public class DatabaseEntrance : IDisposable
         {
             // INFO 排序
             Array.Sort(sqlfiles, new FileNameComparerFunc());
+
+            // INFO 获取当前数据库的版本号，先判断有没有，后判断大小
+            var versions = TableHandler.GetDatabaseVersion().ToList();
+
+            // 包含任何内容
+            if (versions.Any())
+            {
+                // 当前版本号
+                string? version = versions.First()["version"].ToString();
+                // 过滤出当前版本号的文件
+                sqlfiles = sqlfiles.Where(file => Path.GetFileNameWithoutExtension(file.FullName) != version).ToArray();
+                // INFO 排序 Again
+                Array.Sort(sqlfiles, new FileNameComparerFunc());
+            }
+
             // INFO 执行
             sqlfiles.ToList().ForEach(file =>
             {
                 string name = file.Name;
                 LogCore.Log($"系统正在读取{name}的内容,即将执行...", UOutLevel.INFO);
+
                 TableHandler.ExecuteFileCommands(file);
             });
             LogCore.Success("系统数据库更新成功");
+
+            // UPDATE: 更新到最新的版本号
+            if (sqlfiles.Length > 0)
+            {
+                //不带后缀名的名称
+                string lastversion = Path.GetFileNameWithoutExtension(sqlfiles.Last().FullName);
+                TableHandler.UpdateDatabaseVersion(lastversion);
+                LogCore.Success($"系统数据库更新成功, 已更新到版本号:{lastversion}");
+            }
+
             Status = true;
         }
         catch (Exception e)

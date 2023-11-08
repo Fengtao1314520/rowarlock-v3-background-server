@@ -178,7 +178,7 @@
         "desc": "job结果时间(YYYY-MM-DD HH:MM:SS.SSS)"
       },
       {
-        "name": "finialresultt",
+        "name": "finialresult",
         "type": "TEXT",
         "desc": "最终结果"
       }

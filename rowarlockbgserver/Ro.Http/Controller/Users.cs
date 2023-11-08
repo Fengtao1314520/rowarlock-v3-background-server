@@ -43,6 +43,9 @@ public class Users : TCarterModule, ICarterModule
         HOutObjType obj = new() {method = "post", api = "/api/upuserinfo", para = userInfo};
         // 验证
         ResponseType result = RelatedFunc(obj, "upuserinfo", userInfo, out LogStruct logStruct);
+        // INFO 4: 日志输出
+        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        OutLogStruct.Out(logStruct);
         return Results.Json(result);
     }
 
@@ -61,6 +64,9 @@ public class Users : TCarterModule, ICarterModule
         HOutObjType obj = new() {method = "post", api = "/api/userlogin", para = userInfo};
         // 验证
         ResponseType result = RelatedFunc(obj, "userlogin", userInfo, out LogStruct logStruct);
+        // INFO 4: 日志输出
+        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        OutLogStruct.Out(logStruct);
         return Results.Json(result);
     }
 
@@ -78,6 +84,9 @@ public class Users : TCarterModule, ICarterModule
         HOutObjType obj = new() {method = "post", api = "/api/userlogout", para = userInfo};
         // 验证
         ResponseType result = RelatedFunc(obj, "userlogout", userInfo, out LogStruct logStruct);
+        // INFO 4: 日志输出
+        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        OutLogStruct.Out(logStruct);
         return Results.Json(result);
     }
 
@@ -132,12 +141,11 @@ public class Users : TCarterModule, ICarterModule
         else
         {
             // info: 验证
-            GenericVaildator genericVaildator = new(typeof(UserDetails), "Id");
-            ValidationResult valid = genericVaildator.Validate(para);
-
+            StrongTypeVaildator strongTypeVaildator = new(typeof(UserDetails), "Id");
+            ValidationResult valid = strongTypeVaildator.Validate(para);
+            // INFO 3: 验证结果
             result = valid.IsValid switch
             {
-                // INFO 3: 验证结果
                 // INFO 3.1 根据请求类型，执行不同的操作
                 true => UserInfoEvent.OnBasicEvent(hOutObjType, para, ref logStruct), //数据处理并返回结果
                 false => ReqResFunc.GetErrorResponseBody(UReqCode.ParaEmpty)

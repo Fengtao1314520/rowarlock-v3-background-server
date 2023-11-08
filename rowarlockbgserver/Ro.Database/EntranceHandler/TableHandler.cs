@@ -99,13 +99,27 @@ public abstract class TableHandler
     /// <param name="fileInfo"></param>
     public static void ExecuteFileCommands(FileInfo fileInfo)
     {
-        //string name = fileInfo.Name;
-        StreamReader read = fileInfo.OpenText();
-        // 从文件读取并显示行，直到文件的末尾
-        while (read.ReadLine() is { } line)
-            if (!string.IsNullOrEmpty(line))
-                Polymerization.NudeExecuteUtil.NudeExecute(ComArgs.SqliteConnection, line);
-        read.Close();
-        read.Dispose();
+        string filePath = fileInfo.FullName;
+        using FileStream stream = new(filePath, FileMode.Open);
+        using StreamReader reader = new(stream);
+        string sql = reader.ReadToEnd();
+        Polymerization.NudeExecuteUtil.NudeExecute(ComArgs.SqliteConnection, sql);
+    }
+
+
+    /// <summary>
+    /// 获取数据库版本
+    /// </summary>
+    /// <returns></returns>
+    public static IEnumerable<Dictionary<string, object>> GetDatabaseVersion()
+    {
+        return Polymerization.SelectUtil.SelectDataToDictList(ComArgs.SqliteConnection, "ro_version", "*",
+            "name='database'");
+    }
+
+    public static void UpdateDatabaseVersion(string version)
+    {
+        Polymerization.UpdateUtil.UpdateDataWithCondition(ComArgs.SqliteConnection, "ro_version",
+            "name='database',version='" + version + "'", "name='database'");
     }
 }

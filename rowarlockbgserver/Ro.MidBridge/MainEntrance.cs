@@ -38,7 +38,10 @@ public class MainEntrance : IDisposable
     /// </summary>
     private HttpEntrance _httpEntrance;
 
-    private EventHandleEntrance _eventHandleEntrance;
+    /// <summary>
+    ///  事件绑定 entrance
+    /// </summary>
+    private readonly EventHandleEntrance _eventHandleEntrance;
 
     #endregion
 
@@ -68,7 +71,6 @@ public class MainEntrance : IDisposable
         UpdateSql();
         // info 3.打开网络服务
         StartHttpServer(configJObject);
-
         // info 4. 加载事件
         _eventHandleEntrance.LoadEvents();
         return this;
@@ -80,7 +82,6 @@ public class MainEntrance : IDisposable
     public MainEntrance Stop()
     {
         _databaseEntrance.DisconnectDb();
-
         // info 4. 卸载事件
         _eventHandleEntrance.UnLoadEvents();
         return this;
@@ -89,10 +90,10 @@ public class MainEntrance : IDisposable
     /// <summary>
     /// 释放服务
     /// </summary>
-    /// <exception cref="NotImplementedException"></exception>
     public void Dispose()
     {
         _databaseEntrance.Dispose();
+        _httpEntrance.Dispose();
     }
 
     #endregion

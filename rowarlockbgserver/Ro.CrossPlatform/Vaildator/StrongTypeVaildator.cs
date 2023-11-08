@@ -5,14 +5,14 @@ namespace Ro.CrossPlatform.Vaildator;
 /// <summary>
 /// 通用性验证
 /// </summary>
-public class GenericVaildator : AbstractValidator<object>
+public class StrongTypeVaildator : AbstractValidator<object>
 {
     /// <summary>
     /// 构造函数
     /// </summary>
     /// <param name="type"></param>
     /// <param name="keyName"></param>
-    public GenericVaildator(Type type, string keyName)
+    public StrongTypeVaildator(Type type, string keyName)
     {
         // 1. 验证是否为空
         RuleFor(x => x).Must(x => x != null);
