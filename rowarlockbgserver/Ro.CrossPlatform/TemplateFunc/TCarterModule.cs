@@ -15,6 +15,6 @@ public abstract class TCarterModule
     /// <param name="apitype">HTTP类型</param>
     /// <param name="para">附件参数</param>
     /// <param name="logStruct">LOG结构体</param>
-    protected abstract ResponseType RelatedFunc(HOutObjType hOutObjType, string apitype, object? para,
+    protected abstract ResponseType RelatedFunc(HOutObjType hOutObjType, string apitype, dynamic para,
         out LogStruct logStruct);
 }

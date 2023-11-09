@@ -123,6 +123,16 @@
         "desc": "job的type"
       },
       {
+        "name": "createuserid",
+        "type": "TEXT",
+        "desc": "job创建人id"
+      },
+      {
+        "name": "assigneeuserid",
+        "type": "TEXT",
+        "desc": "job执行人id"
+      },
+      {
         "name": "clientid",
         "type": "TEXT",
         "desc": "job执行客户端"
@@ -181,6 +191,111 @@
         "name": "finialresult",
         "type": "TEXT",
         "desc": "最终结果"
+      }
+    ]
+  },
+  {
+    "name": "ro_task",
+    "field": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "desc": "任务id, 主键"
+      },
+      {
+        "name": "type",
+        "type": "TEXT",
+        "desc": "task的type"
+      },
+      {
+        "name": "createuserid",
+        "type": "TEXT",
+        "desc": "task创建人id"
+      },
+      {
+        "name": "assigneeuserid",
+        "type": "TEXT",
+        "desc": "task执行人id"
+      },
+      {
+        "name": "taskname",
+        "type": "TEXT",
+        "desc": "task的名称"
+      },
+      {
+        "name": "taskcontent",
+        "type": "TEXT",
+        "desc": "task的内容"
+      },
+      {
+        "name": "status",
+        "type": "TEXT",
+        "desc": "task的状态"
+      },
+      {
+        "name": "expandtime",
+        "type": "INTEGER",
+        "desc": "task预期耗时(秒）"
+      },
+      {
+        "name": "elapsedtime",
+        "type": "INTEGER",
+        "desc": "task已耗时(秒）"
+      },
+      {
+        "name": "starttime",
+        "type": "TEXT",
+        "desc": "task开始时间(YYYY-MM-DD HH:MM:SS.SSS)"
+      },
+      {
+        "name": "endtime",
+        "type": "TEXT",
+        "desc": "task结束时间(YYYY-MM-DD HH:MM:SS.SSS)"
+      }
+    ]
+  },
+  {
+    "name": "ro_statistics",
+    "field": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "desc": "统计id, 主键"
+      },
+      {
+        "name": "userid",
+        "type": "TEXT",
+        "desc": "统计人id"
+      },
+      {
+        "name": "userstatus",
+        "type": "TEXT",
+        "desc": "统计人当前状态"
+      },
+      {
+        "name": "totalcreatetask",
+        "type": "INTEGER",
+        "desc": "用户创建的总任务数,job也是task的一类"
+      },
+      {
+        "name": "totalassigneetask",
+        "type": "INTEGER",
+        "desc": "用户被指向的总任务数,job也是task的一类"
+      },
+      {
+        "name": "lastcreatetasklasttime",
+        "type": "TEXT",
+        "desc": "用户创建任务的最后时间,job也是task的一类，根据实际去不同表内捞取时间段的"
+      },
+      {
+        "name": "lastassigneetasklasttime",
+        "type": "TEXT",
+        "desc": "用户被指向的任务的最后时间,job也是task的一类，根据实际去不同表内捞取时间段的"
+      },
+      {
+        "name": "jobrate",
+        "type": "INTEGER",
+        "desc": "job的比率"
       }
     ]
   }

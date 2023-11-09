@@ -5,11 +5,11 @@ namespace Ro.CrossPlatform.Events.Webs;
 
 public static class UserInfoEvent
 {
-    public static event RoFunc<HOutObjType, object, ResponseType> BasicEvent;
+    public static event RoFunc<HOutObjType, dynamic, ResponseType> BasicEvent;
 
     public static event RoFunc<HOutObjType, string, ResponseType> GetInfoEvent;
 
-    public static ResponseType OnBasicEvent(HOutObjType houtobj, object para, ref LogStruct logstruct)
+    public static ResponseType OnBasicEvent(HOutObjType houtobj, dynamic para, ref LogStruct logstruct)
     {
         return BasicEvent.Invoke(houtobj, para, ref logstruct);
     }

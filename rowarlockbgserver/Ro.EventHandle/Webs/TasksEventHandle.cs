@@ -1,12 +1,62 @@
+using System.Reflection;
+using Ro.Basic;
+using Ro.Basic.UEnum;
 using Ro.Basic.UType.Communicate;
+using Ro.Basic.UType.DataBase;
+using Ro.CrossPlatform.Extension;
+using Ro.CrossPlatform.Func;
 using Ro.CrossPlatform.Logs;
+using Ro.Database.ORM;
+using Task = Ro.Basic.UType.DataBase.Task;
 
 namespace Ro.EventHandle.Webs;
 
 public class TasksEventHandle
 {
-    public ResponseType OnSimpleTasksByUserInfo(HOutObjType houtobj, object para, ref LogStruct logstruct)
+    public ResponseType OnSimpleTasksByUserInfo(HOutObjType houtobj, dynamic para, ref LogStruct logstruct)
     {
-        return new ResponseType();
+        string userid = (para as object).GetPropertyValue("userid").ToString();
+        // 参数实例化
+        Statistics statistics = new()
+        {
+            UserId = userid
+        };
+        // 执行
+        using var dborm = new DBORM<Statistics>(ComArgs.SqliteConnection, statistics);
+        var queryresult = dborm.Query("userid", statistics.UserId);
+
+        // 设置返回类型，失败的,设置返回类型，成功的
+        return ReqResFunc.GetResponseBody(queryresult.Any() ? UReqCode.Success : UReqCode.Fail, queryresult.First());
+    }
+
+    public ResponseType OnListTasksBaseDayByUserInfo(HOutObjType houtobj, dynamic para, ref LogStruct logstruct)
+    {
+        List<Dictionary<string, object>> tempList = new();
+
+        string userid = (para as object).GetPropertyValue("userid").ToString();
+        string days = (para as object).GetPropertyValue("days").ToString();
+        // 参数实例化
+        Task task = new()
+        {
+            AssigneeUserId = userid
+        };
+        // 执行
+        using var dborm = new DBORM<Task>(ComArgs.SqliteConnection, task);
+        //获取当前时间
+        DateTime now = DateTime.Now;
+        // 从当天往前计算days天
+        DateTime start = Convert.ToDateTime(now.ToString("yyyy-MM-dd 00:00:00.000")).AddDays(-Convert.ToInt32(days));
+        var queryresult = dborm.Query("assigneeuserid", task.AssigneeUserId);
+        foreach (var item in queryresult)
+        {
+            //item["EndTime"].ToString()转datetime格式
+            string? ts = item["endtime"].ToString();
+            if (ts == null) continue;
+            DateTime endTime = Convert.ToDateTime(ts);
+            if (endTime < start) tempList.Add(item);
+        }
+
+        // 设置返回类型，失败的,设置返回类型，成功的
+        return ReqResFunc.GetResponseBody(tempList.Any() ? UReqCode.Success : UReqCode.Fail, tempList);
     }
 }

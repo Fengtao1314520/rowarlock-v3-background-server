@@ -26,6 +26,7 @@ public class EventHandleEntrance
         UserInfoEvent.BasicEvent += _userInfoEventHandle.OnBasic;
         UserInfoEvent.GetInfoEvent += _userInfoEventHandle.OnGetInfo;
         TasksEvent.SimpleTasksByUserInfo += _taskEventHandle.OnSimpleTasksByUserInfo;
+        TasksEvent.ListTasksBaseDayByUserInfo += _taskEventHandle.OnListTasksBaseDayByUserInfo;
     }
 
     public void UnLoadEvents()
@@ -33,5 +34,6 @@ public class EventHandleEntrance
         UserInfoEvent.BasicEvent -= _userInfoEventHandle.OnBasic;
         UserInfoEvent.GetInfoEvent -= _userInfoEventHandle.OnGetInfo;
         TasksEvent.SimpleTasksByUserInfo -= _taskEventHandle.OnSimpleTasksByUserInfo;
+        TasksEvent.ListTasksBaseDayByUserInfo -= _taskEventHandle.OnListTasksBaseDayByUserInfo;
     }
 }

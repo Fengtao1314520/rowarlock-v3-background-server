@@ -237,6 +237,16 @@ public class DBORM<T> : IDisposable, IAsyncDisposable
     public List<Dictionary<string, object>> Query(string key, object value)
     {
         string condition = $"{key} = '{value}'";
+        return Query(condition);
+    }
+
+    /// <summary>
+    /// 根据给定条件查询数据
+    /// </summary>
+    /// <param name="condition"></param>
+    /// <returns></returns>
+    public List<Dictionary<string, object>> Query(string condition)
+    {
         var result = Polymerization.SelectUtil.SelectDataToDictList(_sqliteConnection, _tableName, "*", condition);
         return result;
     }

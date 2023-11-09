@@ -117,6 +117,10 @@ public abstract class TableHandler
             "name='database'");
     }
 
+    /// <summary>
+    /// 升级数据库版本
+    /// </summary>
+    /// <param name="version"></param>
     public static void UpdateDatabaseVersion(string version)
     {
         Polymerization.UpdateUtil.UpdateDataWithCondition(ComArgs.SqliteConnection, "ro_version",

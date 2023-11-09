@@ -119,7 +119,7 @@ public class Users : TCarterModule, ICarterModule
     /// <param name="apitype">HTTP类型</param>
     /// <param name="para">附件参数</param>
     /// <param name="logStruct">LOG结构体</param>
-    protected override ResponseType RelatedFunc(HOutObjType hOutObjType, string apitype, object? para,
+    protected override ResponseType RelatedFunc(HOutObjType hOutObjType, string apitype, dynamic para,
         out LogStruct logStruct)
     {
         // 返回类型结果
