@@ -223,7 +223,7 @@ public class DBORM<T> : IDisposable, IAsyncDisposable
     /// <summary>
     /// 根据主键查询数据
     /// </summary>
-    public List<Dictionary<string, object>> Query()
+    public List<T> Query()
     {
         return Query(_keyName, _keyValue);
     }
@@ -234,48 +234,19 @@ public class DBORM<T> : IDisposable, IAsyncDisposable
     /// </summary>
     /// <param name="key">查询字段名</param>
     /// <param name="value">查询字段值</param>
-    public List<Dictionary<string, object>> Query(string key, object value)
+    public List<T> Query(string key, object value)
     {
         string condition = $"{key} = '{value}'";
         return Query(condition);
     }
 
-    /// <summary>
-    /// 根据给定条件查询数据
-    /// </summary>
-    /// <param name="condition"></param>
-    /// <returns></returns>
-    public List<Dictionary<string, object>> Query(string condition)
+
+    public List<T> Query(string condition)
     {
-        var result = Polymerization.SelectUtil.SelectDataToDictList(_sqliteConnection, _tableName, "*", condition);
-        return result;
-    }
-
-
-    public List<TK> Query<TK>()
-    {
-        return Query<TK>(_keyName, _keyValue);
-    }
-
-
-    /// <summary>
-    /// 根据给定key和value查询数据
-    /// </summary>
-    /// <param name="key">查询字段名</param>
-    /// <param name="value">查询字段值</param>
-    public List<TK> Query<TK>(string key, object value)
-    {
-        string condition = $"{key} = '{value}'";
-        return Query<TK>(condition);
-    }
-
-
-    public List<TK> Query<TK>(string condition)
-    {
-        var result = new List<TK>();
+        var result = new List<T>();
         var queryresult = Polymerization.SelectUtil.SelectDataToDictList(_sqliteConnection, _tableName, "*", condition);
 
-        if (queryresult.Any()) result = TranslateToType<TK>(queryresult);
+        if (queryresult.Any()) result = TranslateToType(queryresult);
 
         return result;
     }
@@ -293,14 +264,14 @@ public class DBORM<T> : IDisposable, IAsyncDisposable
     }
 
 
-    private List<TK> TranslateToType<TK>(List<Dictionary<string, object>> queryresult)
+    private List<T> TranslateToType(List<Dictionary<string, object>> queryresult)
     {
-        var result = new List<TK>();
+        var result = new List<T>();
         // 将 List<Dictionary<string, object>> 转为 List<T>,item为单条数据
         foreach (var item in queryresult)
         {
             // 创建指定 type 的新实例
-            TK t = Activator.CreateInstance<TK>();
+            T t = Activator.CreateInstance<T>();
 
             _allproperties.ToList().ForEach(property =>
             {

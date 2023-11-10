@@ -1,4 +1,3 @@
-using System.Reflection;
 using Ro.Basic;
 using Ro.Basic.UEnum;
 using Ro.Basic.UType.Communicate;
@@ -31,8 +30,6 @@ public class TasksEventHandle
 
     public ResponseType OnListTasksBaseDayByUserInfo(HOutObjType houtobj, dynamic para, ref LogStruct logstruct)
     {
-        List<Dictionary<string, object>> tempList = new();
-
         string userid = (para as object).GetPropertyValue("userid").ToString();
         string days = (para as object).GetPropertyValue("days").ToString();
         // 参数实例化
@@ -46,16 +43,13 @@ public class TasksEventHandle
         DateTime now = DateTime.Now;
         // 从当天往前计算days天
         DateTime start = Convert.ToDateTime(now.ToString("yyyy-MM-dd 00:00:00.000")).AddDays(-Convert.ToInt32(days));
-        var queryresult = dborm.Query("assigneeuserid", task.AssigneeUserId);
-        var queryresult1 = dborm.Query<Task>($"assigneeuserid='{task.AssigneeUserId}'");
-        foreach (var item in queryresult)
-        {
-            // 转datetime格式
-            string? ts = item["endtime"].ToString();
-            if (ts == null) continue;
-            DateTime endTime = Convert.ToDateTime(ts);
-            if (endTime < start) tempList.Add(item);
-        }
+        // var queryresult = dborm.Query("assigneeuserid", task.AssigneeUserId);
+        var queryresult = dborm.Query($"assigneeuserid='{task.AssigneeUserId}'");
+        List<Task> tempList = (from item in queryresult
+            let ts = item.EndTime
+            let endTime = Convert.ToDateTime(ts)
+            where endTime < start
+            select item).ToList();
 
         // 设置返回类型，失败的,设置返回类型，成功的
         return ReqResFunc.GetResponseBody(tempList.Any() ? UReqCode.Success : UReqCode.Fail, tempList);
