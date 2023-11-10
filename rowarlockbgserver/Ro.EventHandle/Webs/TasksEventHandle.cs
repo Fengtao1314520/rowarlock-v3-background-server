@@ -47,9 +47,10 @@ public class TasksEventHandle
         // 从当天往前计算days天
         DateTime start = Convert.ToDateTime(now.ToString("yyyy-MM-dd 00:00:00.000")).AddDays(-Convert.ToInt32(days));
         var queryresult = dborm.Query("assigneeuserid", task.AssigneeUserId);
+        var queryresult1 = dborm.Query<Task>($"assigneeuserid='{task.AssigneeUserId}'");
         foreach (var item in queryresult)
         {
-            //item["EndTime"].ToString()转datetime格式
+            // 转datetime格式
             string? ts = item["endtime"].ToString();
             if (ts == null) continue;
             DateTime endTime = Convert.ToDateTime(ts);

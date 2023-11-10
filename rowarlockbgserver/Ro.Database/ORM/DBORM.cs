@@ -251,8 +251,36 @@ public class DBORM<T> : IDisposable, IAsyncDisposable
         return result;
     }
 
-    #endregion
 
+    public List<TK> Query<TK>()
+    {
+        return Query<TK>(_keyName, _keyValue);
+    }
+
+
+    /// <summary>
+    /// 根据给定key和value查询数据
+    /// </summary>
+    /// <param name="key">查询字段名</param>
+    /// <param name="value">查询字段值</param>
+    public List<TK> Query<TK>(string key, object value)
+    {
+        string condition = $"{key} = '{value}'";
+        return Query<TK>(condition);
+    }
+
+
+    public List<TK> Query<TK>(string condition)
+    {
+        var result = new List<TK>();
+        var queryresult = Polymerization.SelectUtil.SelectDataToDictList(_sqliteConnection, _tableName, "*", condition);
+
+        if (queryresult.Any()) result = TranslateToType<TK>(queryresult);
+
+        return result;
+    }
+
+    #endregion
 
     public void Dispose()
     {
@@ -262,5 +290,35 @@ public class DBORM<T> : IDisposable, IAsyncDisposable
     public async ValueTask DisposeAsync()
     {
         //await _sqliteConnection.DisposeAsync();
+    }
+
+
+    private List<TK> TranslateToType<TK>(List<Dictionary<string, object>> queryresult)
+    {
+        var result = new List<TK>();
+        // 将 List<Dictionary<string, object>> 转为 List<T>,item为单条数据
+        foreach (var item in queryresult)
+        {
+            // 创建指定 type 的新实例
+            TK t = Activator.CreateInstance<TK>();
+
+            _allproperties.ToList().ForEach(property =>
+            {
+                if (property.GetCustomAttribute(typeof(FieldAttrs), false) is not FieldAttrs fieldAttrs) return;
+                // 获取属性名
+                string fieldName = fieldAttrs.FieldName;
+                // 获取属性值
+                object? fieldValue = item[fieldName];
+                Type propertyType = property.PropertyType;
+                // 将fieldValue改为propertyType类型
+                fieldValue = Convert.ChangeType(fieldValue, propertyType);
+                t.GetType().GetProperty(property.Name).SetValue(t, fieldValue);
+            });
+            // 添加
+            result.Add(t);
+        }
+
+        //返回值
+        return result;
     }
 }
