@@ -21,9 +21,9 @@ public class UserInfoEventHandle
     public ResponseType OnBasic(HOutObjType houtobj, dynamic para, ref LogStruct logstruct)
     {
         // 参数实例化
-        UserDetails userDetails = (UserDetails) para;
+        CuDUserDetails cuDUserDetails = (CuDUserDetails) para;
         // 执行
-        using var dborm = new DBORM<UserDetails>(ComArgs.SqliteConnection, userDetails);
+        using var dborm = new DBORM<CuDUserDetails>(ComArgs.SqliteConnection, cuDUserDetails);
         int result = dborm.Update();
         dborm.Dispose(); //GC释放
 
@@ -34,12 +34,12 @@ public class UserInfoEventHandle
     public ResponseType OnGetInfo(HOutObjType houtobj, string para, ref LogStruct logstruct)
     {
         // 参数实例化
-        UserDetails userDetails = new()
+        CuDUserDetails cuDUserDetails = new()
         {
             Id = para
         };
         // 执行
-        using var dborm = new DBORM<UserDetails>(ComArgs.SqliteConnection, userDetails);
+        using var dborm = new DBORM<CuDUserDetails>(ComArgs.SqliteConnection, cuDUserDetails);
         var result = dborm.Query();
         dborm.Dispose(); //GC释放
         return ReqResFunc.GetResponseBody(result.Count > 0 ? UReqCode.Success : UReqCode.Fail, result);

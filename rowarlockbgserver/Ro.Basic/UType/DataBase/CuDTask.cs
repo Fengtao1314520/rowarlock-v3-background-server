@@ -4,7 +4,7 @@ namespace Ro.Basic.UType.DataBase;
 
 [TableAttrs("ro_task", "id")]
 [Serializable]
-public class Task
+public class CuDTask
 {
     [FieldAttrs("id", "TEXT", "任务id, 主键")]
     public string Id { get; set; }

@@ -33,16 +33,16 @@ public class Users : TCarterModule, ICarterModule
     /// 更新用户信息
     /// </summary>
     /// <param name="ctx"></param>
-    /// <param name="userInfo"></param>
+    /// <param name="cuDUserInfo"></param>
     /// <returns></returns>
-    private IResult UpdateUserInfo(HttpContext ctx, UserDetails userInfo)
+    private IResult UpdateUserInfo(HttpContext ctx, CuDUserDetails cuDUserInfo)
     {
         // 设置返回类型
         ctx.Response.ContentType = "application/json";
         // 设置请求类型
-        HOutObjType obj = new() {method = "post", api = "/api/upuserinfo", para = userInfo};
+        HOutObjType obj = new() {method = "post", api = "/api/upuserinfo", para = cuDUserInfo};
         // 验证
-        ResponseType result = RelatedFunc(obj, "upuserinfo", userInfo, out LogStruct logStruct);
+        ResponseType result = RelatedFunc(obj, "upuserinfo", cuDUserInfo, out LogStruct logStruct);
         // INFO 4: 日志输出
         ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
@@ -54,16 +54,16 @@ public class Users : TCarterModule, ICarterModule
     /// 登录
     /// </summary>
     /// <param name="ctx"></param>
-    /// <param name="userInfo"></param>
+    /// <param name="cuDUserInfo"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    private IResult Login(HttpContext ctx, UserDetails userInfo)
+    private IResult Login(HttpContext ctx, CuDUserDetails cuDUserInfo)
     {
         ctx.Response.ContentType = "application/json";
         // 设置请求类型
-        HOutObjType obj = new() {method = "post", api = "/api/userlogin", para = userInfo};
+        HOutObjType obj = new() {method = "post", api = "/api/userlogin", para = cuDUserInfo};
         // 验证
-        ResponseType result = RelatedFunc(obj, "userlogin", userInfo, out LogStruct logStruct);
+        ResponseType result = RelatedFunc(obj, "userlogin", cuDUserInfo, out LogStruct logStruct);
         // INFO 4: 日志输出
         ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
@@ -75,15 +75,15 @@ public class Users : TCarterModule, ICarterModule
     /// 登出
     /// </summary>
     /// <param name="ctx"></param>
-    /// <param name="userInfo"></param>
+    /// <param name="cuDUserInfo"></param>
     /// <returns></returns>
-    private IResult Logout(HttpContext ctx, UserDetails userInfo)
+    private IResult Logout(HttpContext ctx, CuDUserDetails cuDUserInfo)
     {
         ctx.Response.ContentType = "application/json";
         // 设置请求类型
-        HOutObjType obj = new() {method = "post", api = "/api/userlogout", para = userInfo};
+        HOutObjType obj = new() {method = "post", api = "/api/userlogout", para = cuDUserInfo};
         // 验证
-        ResponseType result = RelatedFunc(obj, "userlogout", userInfo, out LogStruct logStruct);
+        ResponseType result = RelatedFunc(obj, "userlogout", cuDUserInfo, out LogStruct logStruct);
         // INFO 4: 日志输出
         ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
@@ -141,7 +141,7 @@ public class Users : TCarterModule, ICarterModule
         else
         {
             // info: 验证
-            StrongTypeVaildator strongTypeVaildator = new(typeof(UserDetails), "Id");
+            StrongTypeVaildator strongTypeVaildator = new(typeof(CuDUserDetails), "Id");
             ValidationResult valid = strongTypeVaildator.Validate(para);
             // INFO 3: 验证结果
             result = valid.IsValid switch

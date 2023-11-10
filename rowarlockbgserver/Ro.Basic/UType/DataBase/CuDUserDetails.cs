@@ -4,7 +4,7 @@ namespace Ro.Basic.UType.DataBase;
 
 [TableAttrs("ro_userdetails", "id")]
 [Serializable]
-public class UserDetails
+public class CuDUserDetails
 {
     [FieldAttrs("id", "TEXT", "用户id, 主键")]
     public string Id { get; set; }

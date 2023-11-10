@@ -4,7 +4,7 @@ namespace Ro.Basic.UType.DataBase;
 
 [TableAttrs("ro_job", "id")]
 [Serializable]
-public class Job
+public class CuDJob
 {
     [FieldAttrs("id", "TEXT", "job的id, 主键")]
     public string Id { get; set; }
