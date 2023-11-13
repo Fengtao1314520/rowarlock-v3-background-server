@@ -4,7 +4,8 @@
 INSERT INTO ro_userdetails (id, uname, unickname, upsd, uemail, ulogintime)
 VALUES ('c5dfead9-9bb1-4800-a00c-da71ccb5fe19', 'user1', 'User Nickname 1', 'Password1', 'user1@example.com',
         '2022-01-01 10:00:00'),
-       ('23456', 'user2', 'User Nickname 2', 'Password2', 'user2@example.com', '2022-01-01 11:00:00'),
+       ('6C8dA9ef-de6C-25bc-bFD1-F4cC2E8d5A74', 'user2', 'User Nickname 2', 'Password2', 'user2@example.com',
+        '2022-01-01 11:00:00'),
        ('34567', 'user3', 'User Nickname 3', 'Password3', 'user3@example.com', '2022-01-01 12:00:00'),
        ('45678', 'user4', 'User Nickname 4', 'Password4', 'user4@example.com', '2022-01-01 13:00:00'),
        ('56789', 'user5', 'User Nickname 5', 'Password5', 'user5@example.com', '2022-01-01 14:00:00'),

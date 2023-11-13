@@ -298,5 +298,55 @@
         "desc": "job的比率"
       }
     ]
+  },
+  {
+    "name": "ro_release",
+    "field": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "desc": "release的id, 主键"
+      },
+      {
+        "name": "createuserid",
+        "type": "TEXT",
+        "desc": "release创建人id"
+      },
+      {
+        "name": "assigneeuserid",
+        "type": "TEXT",
+        "desc": "release执行人id"
+      },
+      {
+        "name": "releasename",
+        "type": "TEXT",
+        "desc": "release的名称"
+      },
+      {
+        "name": "releasedescription",
+        "type": "TEXT",
+        "desc": "release的描述"
+      },
+      {
+        "name": "status",
+        "type": "TEXT",
+        "desc": "release的状态"
+      },
+      {
+        "name": "createdatetime",
+        "type": "TEXT",
+        "desc": "release创建时间(YYYY-MM-DD HH:MM:SS.SSS)"
+      },
+      {
+        "name": "modifydatetime",
+        "type": "TEXT",
+        "desc": "release修改时间(YYYY-MM-DD HH:MM:SS.SSS)"
+      },
+      {
+        "name": "releasecontent",
+        "type": "TEXT",
+        "desc": "release的内容,JSON格式，除去已被定义的内容外，全部写入content"
+      }
+    ]
   }
 ]

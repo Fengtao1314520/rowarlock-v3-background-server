@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Ro.Basic.UType.Communicate;
+using Ro.Basic.UType.DataBase;
 using Ro.CrossPlatform.Events.Webs;
 using Ro.CrossPlatform.Logs;
 using Ro.CrossPlatform.TemplateFunc;
@@ -12,37 +13,21 @@ using Ro.CrossPlatform.Vaildator;
 
 namespace Ro.Http.Controller;
 
-/// <summary>
-/// 👇 Create a Carter module for the API
-/// </summary>
-public class Tasks : TCarterModule, ICarterModule
+public class Release : TCarterModule, ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/getusertasksimple", GetUserTaskSimple);
-        app.MapGet("/getusertasklistbydays", GetUserTaskListByDays);
+        app.MapGet("/getreleaselistbyyear", GetReleaseListByYear);
+        app.MapPost("/updaterelease", UpdataRelease);
     }
 
-    /// <summary>
-    /// 按照日期获取用户的task列表
-    /// </summary>
-    /// <param name="ctx"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    private IResult GetUserTaskListByDays(HttpContext ctx)
+    private IResult UpdataRelease(HttpContext ctx, CuDRelease cuDRelease)
     {
         ctx.Response.ContentType = "application/json";
-        //检索首个userid
-        IQueryCollection allQuery = ctx.Request.Query;
-        string? userid = allQuery.AsMultiple<string>("userid").FirstOrDefault();
-        string? days = allQuery.AsMultiple<string>("days").FirstOrDefault();
-        // 验证
-        dynamic paradata = new {userid = userid, days = days};
         // 设置请求类型
-        HOutObjType obj = new() {method = "get", api = "/api/getusertasklistbydays", para = paradata};
-
-        //IMP! 只是给了List,给到前端，需要再根据status、task进行分组计算的，前端做，后端不干这活!
-        ResponseType result = RelatedFunc(obj, "getusertasklistbydays", paradata, out LogStruct logStruct);
+        HOutObjType obj = new() {method = "post", api = "/api/updaterelease", para = cuDRelease};
+        // 验证
+        ResponseType result = RelatedFunc(obj, "updaterelease", cuDRelease, out LogStruct logStruct);
         // INFO 4: 日志输出
         ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
@@ -50,23 +35,23 @@ public class Tasks : TCarterModule, ICarterModule
     }
 
     /// <summary>
-    /// 获取用户的任务简略信息
+    /// 按年份获取发布列表
+    /// 基于用户userid
     /// </summary>
     /// <param name="ctx"></param>
     /// <returns></returns>
-    private IResult GetUserTaskSimple(HttpContext ctx)
+    private IResult GetReleaseListByYear(HttpContext ctx)
     {
         ctx.Response.ContentType = "application/json";
         //检索首个userid
         IQueryCollection allQuery = ctx.Request.Query;
         string? userid = allQuery.AsMultiple<string>("userid").FirstOrDefault();
-        string? days = allQuery.AsMultiple<string>("days").FirstOrDefault();
         // 验证
-        dynamic paradata = new {userid = userid, days = days};
+        dynamic paradata = new {userid = userid};
         // 设置请求类型
-        HOutObjType obj = new() {method = "get", api = "/api/getusertasksimple", para = paradata};
-        // 执行操作
-        ResponseType result = RelatedFunc(obj, "getusertasksimple", paradata, out LogStruct logStruct);
+        HOutObjType obj = new() {method = "get", api = "/api/getreleaselistbyyear", para = paradata};
+
+        ResponseType result = RelatedFunc(obj, "getreleaselistbyyear", paradata, out LogStruct logStruct);
         // INFO 4: 日志输出
         ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
@@ -88,19 +73,22 @@ public class Tasks : TCarterModule, ICarterModule
         ValidationResult valid = dynamicTypeVaildator.Validate(para);
         switch (apitype)
         {
-            case "getusertasksimple":
+            case "getreleaselistbyyear":
+            {
                 // INFO 3: 处理
                 if (valid.IsValid)
-                    result = TasksEvent.OnSimpleTasksByUserInfo(hOutObjType, para, ref logStruct);
+                    result = ReleaseEvent.OnListReleaseBaseYearByUserInfo(hOutObjType, para, ref logStruct);
                 break;
-            case "getusertasklistbydays":
+            }
+            case "updaterelease":
+            {
                 // INFO 3: 处理
                 if (valid.IsValid)
-                    result = TasksEvent.OnListTasksBaseDayByUserInfo(hOutObjType, para, ref logStruct);
+                    result = ReleaseEvent.OnUpdataRelease(hOutObjType, para, ref logStruct);
                 break;
+            }
         }
 
-        // INFO 5: 返回结果
         return result;
     }
 }

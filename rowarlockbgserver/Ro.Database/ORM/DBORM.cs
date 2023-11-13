@@ -6,7 +6,7 @@ using Ro.Database.Dependent;
 
 namespace Ro.Database.ORM;
 
-public class DBORM<T> : IDisposable, IAsyncDisposable
+public class DBORM<T> : IDisposable
 {
     /// <summary>
     /// 全属性值
@@ -256,11 +256,6 @@ public class DBORM<T> : IDisposable, IAsyncDisposable
     public void Dispose()
     {
         //_sqliteConnection.Dispose();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        //await _sqliteConnection.DisposeAsync();
     }
 
 

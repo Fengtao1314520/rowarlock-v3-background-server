@@ -9,8 +9,8 @@ namespace Ro.EventHandle;
 public class EventHandleEntrance
 {
     private readonly UserInfoEventHandle _userInfoEventHandle;
-
     private readonly TasksEventHandle _taskEventHandle;
+    private readonly RelaseEventHandle _relaseEventHandle;
 
     /// <summary>
     /// 构造函数
@@ -19,6 +19,7 @@ public class EventHandleEntrance
     {
         _userInfoEventHandle = new UserInfoEventHandle();
         _taskEventHandle = new TasksEventHandle();
+        _relaseEventHandle = new RelaseEventHandle();
     }
 
     public void LoadEvents()
@@ -27,6 +28,8 @@ public class EventHandleEntrance
         UserInfoEvent.GetInfoEvent += _userInfoEventHandle.OnGetInfo;
         TasksEvent.SimpleTasksByUserInfo += _taskEventHandle.OnSimpleTasksByUserInfo;
         TasksEvent.ListTasksBaseDayByUserInfo += _taskEventHandle.OnListTasksBaseDayByUserInfo;
+        ReleaseEvent.ListReleaseBaseYearByUserInfo += _relaseEventHandle.OnListReleaseBaseYearByUserInfo;
+        ReleaseEvent.UpdataRelease += _relaseEventHandle.OnUpdataRelease;
     }
 
     public void UnLoadEvents()
@@ -35,5 +38,7 @@ public class EventHandleEntrance
         UserInfoEvent.GetInfoEvent -= _userInfoEventHandle.OnGetInfo;
         TasksEvent.SimpleTasksByUserInfo -= _taskEventHandle.OnSimpleTasksByUserInfo;
         TasksEvent.ListTasksBaseDayByUserInfo -= _taskEventHandle.OnListTasksBaseDayByUserInfo;
+        ReleaseEvent.ListReleaseBaseYearByUserInfo -= _relaseEventHandle.OnListReleaseBaseYearByUserInfo;
+        ReleaseEvent.UpdataRelease -= _relaseEventHandle.OnUpdataRelease;
     }
 }

@@ -2,7 +2,6 @@ using System.Text;
 using Newtonsoft.Json.Linq;
 using Ro.Basic;
 using Ro.Basic.UEnum;
-using Ro.Basic.UType;
 using Ro.Basic.UType.Adapter;
 using Ro.CrossPlatform.Extension;
 using Ro.CrossPlatform.Logs;
@@ -123,7 +122,19 @@ public abstract class TableHandler
     /// <param name="version"></param>
     public static void UpdateDatabaseVersion(string version)
     {
-        Polymerization.UpdateUtil.UpdateDataWithCondition(ComArgs.SqliteConnection, "ro_version",
-            "name='database',version='" + version + "'", "name='database'");
+        // 查询字段对应数据是否存在
+        int count = Polymerization.SelectUtil.SelectDataCount(ComArgs.SqliteConnection, "ro_version",
+            "name='database'");
+
+        //小于1 说明不存在
+        if (count < 1)
+            // 插入数据
+            Polymerization.InsertUtil.InsertDataWithField(ComArgs.SqliteConnection, "ro_version",
+                "name,version,author,lastupdate",
+                $"'database','{version}','system','{DateTime.Now:yyyy-MM-dd HH-mm-ss.fff}'");
+        else
+            // 更新数据
+            Polymerization.UpdateUtil.UpdateDataWithCondition(ComArgs.SqliteConnection, "ro_version",
+                "name='database',version='" + version + "'", "name='database'");
     }
 }
