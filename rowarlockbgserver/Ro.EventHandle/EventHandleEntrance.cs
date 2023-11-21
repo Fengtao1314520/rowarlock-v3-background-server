@@ -1,4 +1,3 @@
-using Ro.CrossPlatform.Events.Webs;
 using Ro.EventHandle.Webs;
 
 namespace Ro.EventHandle;
@@ -11,6 +10,8 @@ public class EventHandleEntrance
     private readonly UserInfoEventHandle _userInfoEventHandle;
     private readonly TasksEventHandle _taskEventHandle;
     private readonly RelaseEventHandle _relaseEventHandle;
+    private readonly InterfacePackageEventHandle _interfacePackageEventHandle;
+    private readonly StatisticsEventHandle _statisticsEventHandle;
 
     /// <summary>
     /// 构造函数
@@ -18,27 +19,34 @@ public class EventHandleEntrance
     public EventHandleEntrance()
     {
         _userInfoEventHandle = new UserInfoEventHandle();
+        _statisticsEventHandle = new StatisticsEventHandle();
         _taskEventHandle = new TasksEventHandle();
         _relaseEventHandle = new RelaseEventHandle();
+        _interfacePackageEventHandle = new InterfacePackageEventHandle();
     }
 
+    /// <summary>
+    /// 加载事件
+    /// </summary>
     public void LoadEvents()
     {
-        UserInfoEvent.BasicEvent += _userInfoEventHandle.OnBasic;
-        UserInfoEvent.GetInfoEvent += _userInfoEventHandle.OnGetInfo;
-        TasksEvent.SimpleTasksByUserInfo += _taskEventHandle.OnSimpleTasksByUserInfo;
-        TasksEvent.ListTasksBaseDayByUserInfo += _taskEventHandle.OnListTasksBaseDayByUserInfo;
-        ReleaseEvent.ListReleaseBaseYearByUserInfo += _relaseEventHandle.OnListReleaseBaseYearByUserInfo;
-        ReleaseEvent.UpdataRelease += _relaseEventHandle.OnUpdataRelease;
+        _userInfoEventHandle.LoadEvent();
+        _statisticsEventHandle.LoadEvent();
+        _taskEventHandle.LoadEvent();
+        _relaseEventHandle.LoadEvent();
+        _interfacePackageEventHandle.LoadEvent();
     }
 
+
+    /// <summary>
+    /// 卸载事件
+    /// </summary>
     public void UnLoadEvents()
     {
-        UserInfoEvent.BasicEvent -= _userInfoEventHandle.OnBasic;
-        UserInfoEvent.GetInfoEvent -= _userInfoEventHandle.OnGetInfo;
-        TasksEvent.SimpleTasksByUserInfo -= _taskEventHandle.OnSimpleTasksByUserInfo;
-        TasksEvent.ListTasksBaseDayByUserInfo -= _taskEventHandle.OnListTasksBaseDayByUserInfo;
-        ReleaseEvent.ListReleaseBaseYearByUserInfo -= _relaseEventHandle.OnListReleaseBaseYearByUserInfo;
-        ReleaseEvent.UpdataRelease -= _relaseEventHandle.OnUpdataRelease;
+        _userInfoEventHandle.UnLoadEvent();
+        _statisticsEventHandle.UnLoadEvent();
+        _taskEventHandle.UnLoadEvent();
+        _relaseEventHandle.UnLoadEvent();
+        _interfacePackageEventHandle.UnLoadEvent();
     }
 }

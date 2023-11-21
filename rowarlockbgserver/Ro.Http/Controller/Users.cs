@@ -1,16 +1,13 @@
 using Carter;
 using Carter.Request;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Ro.Basic.UEnum;
+using Ro.Basic.UEnum.APIUrl;
 using Ro.Basic.UType.Communicate;
 using Ro.Basic.UType.DataBase;
 using Ro.CrossPlatform.Events.Webs;
-using Ro.CrossPlatform.Func;
 using Ro.CrossPlatform.Logs;
-using Ro.CrossPlatform.TemplateFunc;
 using Ro.CrossPlatform.Vaildator;
 
 namespace Ro.Http.Controller;
@@ -18,35 +15,15 @@ namespace Ro.Http.Controller;
 /// <summary>
 /// 👇 Create a Carter module for the API
 /// </summary>
-public class Users : TCarterModule, ICarterModule
+public class Users : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/userinfo", GetUserInfo);
-        app.MapPost("/upuserinfo", UpdateUserInfo);
-        app.MapPost("/userlogin", Login);
-        app.MapPost("/userlogout", Logout);
-    }
-
-
-    /// <summary>
-    /// 更新用户信息
-    /// </summary>
-    /// <param name="ctx"></param>
-    /// <param name="cuDUserInfo"></param>
-    /// <returns></returns>
-    private IResult UpdateUserInfo(HttpContext ctx, CuDUserDetails cuDUserInfo)
-    {
-        // 设置返回类型
-        ctx.Response.ContentType = "application/json";
-        // 设置请求类型
-        HOutObjType obj = new() {method = "post", api = "/api/upuserinfo", para = cuDUserInfo};
-        // 验证
-        ResponseType result = RelatedFunc(obj, "upuserinfo", cuDUserInfo, out LogStruct logStruct);
-        // INFO 4: 日志输出
-        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
-        OutLogStruct.Out(logStruct);
-        return Results.Json(result);
+        app.MapGet(ApiUrl.USERINFO, GetUserInfo);
+        app.MapPost(ApiUrl.USERINFO, CreateUserInfo);
+        app.MapPut(ApiUrl.USERINFO, UpdateUserInfo);
+        app.MapPost(ApiUrl.LOGIN, Login);
+        app.MapPost(ApiUrl.LOGOUT, Logout);
     }
 
 
@@ -56,17 +33,37 @@ public class Users : TCarterModule, ICarterModule
     /// <param name="ctx"></param>
     /// <param name="cuDUserInfo"></param>
     /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
     private IResult Login(HttpContext ctx, CuDUserDetails cuDUserInfo)
     {
+        // INFO 0: 日志初始化
+        LogStruct logStruct = new();
+        logStruct.Init(true);
+
+        // INFO 1: 设置返回类型
         ctx.Response.ContentType = "application/json";
-        // 设置请求类型
-        HOutObjType obj = new() {method = "post", api = "/api/userlogin", para = cuDUserInfo};
-        // 验证
-        ResponseType result = RelatedFunc(obj, "userlogin", cuDUserInfo, out LogStruct logStruct);
+        // INFO 2: 拼装请求对象
+        HOutObjType hOutObjType = new()
+        {
+            Method = ApiMethod.POST,
+            Api = ApiUrl.LOGIN,
+            Para = cuDUserInfo
+        };
+
+        // INFO 3: 验证
+        bool valid = QuoteVaildator.IsQuote(cuDUserInfo, typeof(CuDUserDetails), "Id");
+
+        // INFO 3.1: 验证结果并执行
+        ResponseType? result = valid switch
+        {
+            // INFO 3.2 执行不同的操作
+            true => UserInfoEvent.OnDiffEvent(hOutObjType, cuDUserInfo, ref logStruct, hOutObjType.Api,
+                hOutObjType.Method), //数据处理并返回结果
+            false => QuoteVaildator.NoneValidResponse
+        };
         // INFO 4: 日志输出
         ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
+        // INFO 5: 返回结果
         return Results.Json(result);
     }
 
@@ -79,14 +76,118 @@ public class Users : TCarterModule, ICarterModule
     /// <returns></returns>
     private IResult Logout(HttpContext ctx, CuDUserDetails cuDUserInfo)
     {
+        // INFO 0: 日志初始化
+        LogStruct logStruct = new();
+        logStruct.Init(true);
+
+        // INFO 1: 设置返回类型
         ctx.Response.ContentType = "application/json";
-        // 设置请求类型
-        HOutObjType obj = new() {method = "post", api = "/api/userlogout", para = cuDUserInfo};
-        // 验证
-        ResponseType result = RelatedFunc(obj, "userlogout", cuDUserInfo, out LogStruct logStruct);
+        // INFO 2: 拼装请求对象
+        HOutObjType hOutObjType = new()
+        {
+            Method = ApiMethod.POST,
+            Api = ApiUrl.LOGOUT,
+            Para = cuDUserInfo
+        };
+
+        // INFO 3: 验证
+        bool valid = QuoteVaildator.IsQuote(cuDUserInfo, typeof(CuDUserDetails), "Id");
+
+        // INFO 3.1: 验证结果并执行
+        ResponseType? result = valid switch
+        {
+            // INFO 3.2 执行不同的操作
+            true => UserInfoEvent.OnDiffEvent(hOutObjType, cuDUserInfo, ref logStruct, hOutObjType.Api,
+                hOutObjType.Method), //数据处理并返回结果
+            false => QuoteVaildator.NoneValidResponse
+        };
         // INFO 4: 日志输出
         ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
+        // INFO 5: 返回结果
+        return Results.Json(result);
+    }
+
+
+    /// <summary>
+    /// 创建用户信息
+    /// </summary>
+    /// <param name="ctx"></param>
+    /// <param name="cuDUserInfo"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    private IResult CreateUserInfo(HttpContext ctx, CuDUserDetails cuDUserInfo)
+    {
+        // INFO 0: 日志初始化
+        LogStruct logStruct = new();
+        logStruct.Init(true);
+
+        // INFO 1: 设置返回类型
+        ctx.Response.ContentType = "application/json";
+        // INFO 2: 拼装请求对象
+        HOutObjType hOutObjType = new()
+        {
+            Method = ApiMethod.POST,
+            Api = ApiUrl.USERINFO,
+            Para = cuDUserInfo
+        };
+
+        // INFO 3: 验证
+        bool valid = QuoteVaildator.IsQuote(cuDUserInfo, typeof(CuDUserDetails), "Id");
+
+        // INFO 3.1: 验证结果并执行
+        ResponseType? result = valid switch
+        {
+            // INFO 3.2 执行不同的操作
+            true => UserInfoEvent.OnDiffEvent(hOutObjType, cuDUserInfo, ref logStruct, hOutObjType.Api,
+                hOutObjType.Method), //数据处理并返回结果
+            false => QuoteVaildator.NoneValidResponse
+        };
+        // INFO 4: 日志输出
+        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        OutLogStruct.Out(logStruct);
+        // INFO 5: 返回结果
+        return Results.Json(result);
+    }
+
+
+    /// <summary>
+    /// 更新用户信息
+    /// </summary>
+    /// <param name="ctx"></param>
+    /// <param name="cuDUserInfo"></param>
+    /// <returns></returns>
+    private IResult UpdateUserInfo(HttpContext ctx, CuDUserDetails cuDUserInfo)
+    {
+        // INFO 0: 日志初始化
+        LogStruct logStruct = new();
+        logStruct.Init(true);
+
+        // INFO 1: 设置返回类型
+        ctx.Response.ContentType = "application/json";
+        // INFO 2: 拼装请求对象
+        HOutObjType hOutObjType = new()
+        {
+            Method = ApiMethod.PUT,
+            Api = ApiUrl.USERINFO,
+            Para = cuDUserInfo
+        };
+
+        // INFO 3: 验证
+        bool valid = QuoteVaildator.IsQuote(cuDUserInfo, typeof(CuDUserDetails), "Id");
+
+        // INFO 3.1: 验证结果并执行
+        ResponseType? result = valid switch
+        {
+            // INFO 3.2 执行不同的操作
+            true => UserInfoEvent.OnDiffEvent(hOutObjType, cuDUserInfo, ref logStruct, hOutObjType.Api,
+                hOutObjType.Method), //数据处理并返回结果
+            false => QuoteVaildator.NoneValidResponse
+        };
+        // INFO 4: 日志输出
+        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        OutLogStruct.Out(logStruct);
+        // INFO 5: 返回结果
         return Results.Json(result);
     }
 
@@ -98,61 +199,44 @@ public class Users : TCarterModule, ICarterModule
     /// <returns></returns>
     private IResult GetUserInfo(HttpContext ctx)
     {
-        ctx.Response.ContentType = "application/json";
         //检索首个userid
         IQueryCollection allQuery = ctx.Request.Query;
         string? userid = allQuery.AsMultiple<string>("userid").FirstOrDefault();
-        // 设置请求类型
-        HOutObjType obj = new() {method = "get", api = "/api/userinfo", para = allQuery};
-        // 验证
-        ResponseType result = RelatedFunc(obj, "getuserinfo", userid, out LogStruct logStruct);
+        // 拼装
+        CuDUserDetails cuDUserInfo = new()
+        {
+            Id = userid
+        };
+
+        // INFO 0: 日志初始化
+        LogStruct logStruct = new();
+        logStruct.Init(true);
+
+        // INFO 1: 设置返回类型
+        ctx.Response.ContentType = "application/json";
+        // INFO 2: 拼装请求对象
+        HOutObjType hOutObjType = new()
+        {
+            Method = ApiMethod.GET,
+            Api = ApiUrl.USERINFO,
+            Para = cuDUserInfo
+        };
+
+        // INFO 3: 验证
+        bool valid = QuoteVaildator.IsQuote(cuDUserInfo, typeof(CuDUserDetails), "Id");
+
+        // INFO 3.1: 验证结果并执行
+        ResponseType? result = valid switch
+        {
+            // INFO 3.2 执行不同的操作
+            true => UserInfoEvent.OnDiffEvent(hOutObjType, cuDUserInfo, ref logStruct, hOutObjType.Api,
+                hOutObjType.Method), //数据处理并返回结果
+            false => QuoteVaildator.NoneValidResponse
+        };
         // INFO 4: 日志输出
         ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
-        return Results.Json(result);
-    }
-
-    /// <summary>
-    /// 相关函数
-    /// </summary>
-    /// <param name="hOutObjType">HTTP内容对象类型</param>
-    /// <param name="apitype">HTTP类型</param>
-    /// <param name="para">附件参数</param>
-    /// <param name="logStruct">LOG结构体</param>
-    protected override ResponseType RelatedFunc(HOutObjType hOutObjType, string apitype, dynamic para,
-        out LogStruct logStruct)
-    {
-        // 返回类型结果
-        ResponseType result = new();
-
-        // INFO 1: 日志初始化
-        logStruct = new LogStruct();
-        logStruct.Init(true);
-
-        // INFO 2: 验证类型
-        if (apitype == "getuserinfo")
-        {
-            // todo:
-            string? userid = para as string;
-            if (!string.IsNullOrEmpty(userid))
-                //不为空
-                result = UserInfoEvent.OnGetInfoEvent(hOutObjType, userid, ref logStruct);
-        }
-        else
-        {
-            // info: 验证
-            StrongTypeVaildator strongTypeVaildator = new(typeof(CuDUserDetails), "Id");
-            ValidationResult valid = strongTypeVaildator.Validate(para);
-            // INFO 3: 验证结果
-            result = valid.IsValid switch
-            {
-                // INFO 3.1 根据请求类型，执行不同的操作
-                true => UserInfoEvent.OnBasicEvent(hOutObjType, para, ref logStruct), //数据处理并返回结果
-                false => ReqResFunc.GetErrorResponseBody(UReqCode.ParaEmpty)
-            };
-        }
-
         // INFO 5: 返回结果
-        return result;
+        return Results.Json(result);
     }
 }

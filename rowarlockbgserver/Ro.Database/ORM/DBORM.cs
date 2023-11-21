@@ -234,7 +234,7 @@ public class DBORM<T> : IDisposable
     /// </summary>
     /// <param name="key">查询字段名</param>
     /// <param name="value">查询字段值</param>
-    public List<T> Query(string key, object value)
+    public List<T> Query(string key, object? value)
     {
         string condition = $"{key} = '{value}'";
         return Query(condition);

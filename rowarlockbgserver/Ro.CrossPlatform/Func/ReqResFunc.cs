@@ -14,7 +14,7 @@ public static class ReqResFunc
     /// <returns></returns>
     public static ResponseType GetResponseBody<T>(UReqCode code, T? data)
     {
-        ResponseType rt = new()
+        ResponseType? rt = new()
         {
             rescode = (int) code,
             resdata = data

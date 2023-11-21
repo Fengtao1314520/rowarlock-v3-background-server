@@ -39,7 +39,7 @@ public class HttpEntrance : IDisposable
 
         // 👇 Create the WebApplicationBuilder
         WebApplicationBuilder builder = WebApplication.CreateBuilder();
-        // 关闭console log
+        // 👇 Close console log
         builder.Logging.ClearProviders();
         // 👇 Add the required Carter services
         builder.Services.AddCarter();

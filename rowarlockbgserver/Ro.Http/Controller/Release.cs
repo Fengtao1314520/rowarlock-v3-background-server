@@ -1,94 +1,153 @@
 using Carter;
 using Carter.Request;
-using FluentValidation.Results;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Ro.Basic.UEnum.APIUrl;
 using Ro.Basic.UType.Communicate;
 using Ro.Basic.UType.DataBase;
 using Ro.CrossPlatform.Events.Webs;
+using Ro.CrossPlatform.Func;
 using Ro.CrossPlatform.Logs;
-using Ro.CrossPlatform.TemplateFunc;
 using Ro.CrossPlatform.Vaildator;
 
 namespace Ro.Http.Controller;
 
-public class Release : TCarterModule, ICarterModule
+public class Release : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/getreleaselistbyyear", GetReleaseListByYear);
-        app.MapPost("/updaterelease", UpdataRelease);
+        app.MapGet(ApiUrl.RELEASE, SplitGetParams);
+        app.MapPut(ApiUrl.RELEASE, UpdateRelease);
+        app.MapPost(ApiUrl.RELEASE, CreateRelease);
     }
 
-    private IResult UpdataRelease(HttpContext ctx, CuDRelease cuDRelease)
+    private IResult CreateRelease(HttpContext ctx, CuDRelease cuDRelease)
     {
+        // INFO 0: 日志初始化
+        LogStruct logStruct = new();
+        logStruct.Init(true);
+
+        // INFO 1: 设置返回类型
         ctx.Response.ContentType = "application/json";
-        // 设置请求类型
-        HOutObjType obj = new() {method = "post", api = "/api/updaterelease", para = cuDRelease};
-        // 验证
-        ResponseType result = RelatedFunc(obj, "updaterelease", cuDRelease, out LogStruct logStruct);
+        // INFO 2: 拼装请求对象
+        HOutObjType hOutObjType = new()
+        {
+            Method = ApiMethod.POST,
+            Api = ApiUrl.RELEASE,
+            Para = cuDRelease
+        };
+
+        // INFO 3: 验证
+        bool valid = QuoteVaildator.IsQuote(cuDRelease, typeof(CuDRelease), "Id");
+
+        // INFO 3.1: 验证结果并执行
+        ResponseType? result = valid switch
+        {
+            // INFO 3.2 执行不同的操作
+            true => ReleaseEvent.OnCreateReleaseEvent(hOutObjType, cuDRelease, ref logStruct), //数据处理并返回结果
+            false => QuoteVaildator.NoneValidResponse
+        };
         // INFO 4: 日志输出
         ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
+        // INFO 5: 返回结果
         return Results.Json(result);
     }
 
+
+    private IResult UpdateRelease(HttpContext ctx, CuDRelease cuDRelease)
+    {
+        // INFO 0: 日志初始化
+        LogStruct logStruct = new();
+        logStruct.Init(true);
+
+        // INFO 1: 设置返回类型
+        ctx.Response.ContentType = "application/json";
+        // INFO 2: 拼装请求对象
+        HOutObjType hOutObjType = new()
+        {
+            Method = ApiMethod.PUT,
+            Api = ApiUrl.RELEASE,
+            Para = cuDRelease
+        };
+
+        // INFO 3: 验证
+        bool valid = QuoteVaildator.IsQuote(cuDRelease, typeof(CuDRelease), "Id");
+
+        // INFO 3.1: 验证结果并执行
+        ResponseType? result = valid switch
+        {
+            // INFO 3.2 执行不同的操作
+            true => ReleaseEvent.OnUpdateReleaseEvent(hOutObjType, cuDRelease, ref logStruct), //数据处理并返回结果
+            false => QuoteVaildator.NoneValidResponse
+        };
+        // INFO 4: 日志输出
+        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        OutLogStruct.Out(logStruct);
+        // INFO 5: 返回结果
+        return Results.Json(result);
+    }
+
+
     /// <summary>
-    /// 按年份获取发布列表
-    /// 基于用户userid
+    /// 基于RESTFUL API的模式,当一个GET存在时，需要基于Params进行分拆
     /// </summary>
     /// <param name="ctx"></param>
     /// <returns></returns>
-    private IResult GetReleaseListByYear(HttpContext ctx)
+    private IResult SplitGetParams(HttpContext ctx)
     {
-        ctx.Response.ContentType = "application/json";
-        //检索首个userid
+        // 接受params
         IQueryCollection allQuery = ctx.Request.Query;
         string? userid = allQuery.AsMultiple<string>("userid").FirstOrDefault();
-        // 验证
-        dynamic paradata = new {userid = userid};
-        // 设置请求类型
-        HOutObjType obj = new() {method = "get", api = "/api/getreleaselistbyyear", para = paradata};
+        string condition = allQuery["condition"].ToString();
+        CuDRelease cuDRelease = new()
+        {
+            AssigneeUserId = userid
+        };
 
-        ResponseType result = RelatedFunc(obj, "getreleaselistbyyear", paradata, out LogStruct logStruct);
+        // INFO 0: 日志初始化
+        LogStruct logStruct = new();
+        logStruct.Init(true);
+
+        // INFO 1: 设置返回类型
+        ctx.Response.ContentType = "application/json";
+
+        // INFO 2: 拼装请求对象
+        HOutObjType hOutObjType = new()
+        {
+            Method = ApiMethod.GET,
+            Api = ApiUrl.STATISTICS,
+            Para = condition
+        };
+
+        // INFO 3: 验证
+        bool valid = QuoteVaildator.IsQuote(cuDRelease, typeof(CuDRelease), "AssigneeUserId");
+
+        // INFO 3.1: 验证结果并执行
+        ResponseType? result = null;
+        if (valid)
+        {
+            // INFO 3.2 执行不同的操作
+            dynamic dycondition = JsonFunc.DeserialzeJsonObject<dynamic>(condition);
+            string? qtype = dycondition["qtype"].ToString();
+            result = qtype switch
+            {
+                "year" => ReleaseEvent.OnGetReleaseYearListByUserIdEvent(hOutObjType, cuDRelease, ref logStruct),
+                "list" => ReleaseEvent.OnGetReleaseListByUserIdEvent(hOutObjType, cuDRelease, ref logStruct),
+                "detail" => ReleaseEvent.OnGetReleaseDetailByIdEvent(hOutObjType, cuDRelease, ref logStruct),
+                _ => result
+            };
+        }
+        else
+        {
+            result = QuoteVaildator.NoneValidResponse;
+        }
+
         // INFO 4: 日志输出
         ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
+        // INFO 5: 返回结果
         return Results.Json(result);
-    }
-
-
-    protected override ResponseType RelatedFunc(HOutObjType hOutObjType, string apitype, dynamic para,
-        out LogStruct logStruct)
-    {
-        // INFO 0: 返回类型结果
-        ResponseType result = new();
-
-        // INFO 1: 日志初始化
-        logStruct = new LogStruct();
-        logStruct.Init(true);
-        // INFO 2: 验证
-        DynamicTypeVaildator dynamicTypeVaildator = new();
-        ValidationResult valid = dynamicTypeVaildator.Validate(para);
-        switch (apitype)
-        {
-            case "getreleaselistbyyear":
-            {
-                // INFO 3: 处理
-                if (valid.IsValid)
-                    result = ReleaseEvent.OnListReleaseBaseYearByUserInfo(hOutObjType, para, ref logStruct);
-                break;
-            }
-            case "updaterelease":
-            {
-                // INFO 3: 处理
-                if (valid.IsValid)
-                    result = ReleaseEvent.OnUpdataRelease(hOutObjType, para, ref logStruct);
-                break;
-            }
-        }
-
-        return result;
     }
 }

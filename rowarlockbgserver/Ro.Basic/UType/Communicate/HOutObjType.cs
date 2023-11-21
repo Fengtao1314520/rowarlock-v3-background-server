@@ -6,7 +6,20 @@ namespace Ro.Basic.UType.Communicate;
 /// </summary>
 public class HOutObjType
 {
-    public string method { get; set; }
-    public string api { get; set; }
-    public object para { get; set; }
+    private string? _url;
+    public required string Method { get; set; }
+    public required string Api { get; set; }
+    public required dynamic Para { get; set; }
+
+    public string? Url
+    {
+        get => _url;
+        set
+        {
+            _url = value;
+            if (!string.IsNullOrEmpty(Api)) _url = $"{Pathbase}/{Api}";
+        }
+    }
+
+    public string Pathbase { get; } = "/api";
 }

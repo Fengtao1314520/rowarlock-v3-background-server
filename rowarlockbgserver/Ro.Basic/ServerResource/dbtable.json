@@ -30,7 +30,7 @@
       {
         "name": "ulogintime",
         "type": "TEXT",
-        "desc": "用户登陆的时间(YYYY-MM-DD HH:MM:SS.SSS)"
+        "desc": "用户登陆的时间(YYYY-MM-DD HH:MM:SS.fff)"
       }
     ]
   },
@@ -40,7 +40,7 @@
       {
         "name": "name",
         "type": "TEXT",
-        "desc": "版本号主，主键"
+        "desc": "版本号主,主键"
       },
       {
         "name": "version",
@@ -155,12 +155,12 @@
       {
         "name": "starttime",
         "type": "TEXT",
-        "desc": "job开始时间(YYYY-MM-DD HH:MM:SS.SSS)"
+        "desc": "job开始时间(YYYY-MM-DD HH:MM:SS.fff)"
       },
       {
         "name": "endtime",
         "type": "TEXT",
-        "desc": "job结束时间(YYYY-MM-DD HH:MM:SS.SSS)"
+        "desc": "job结束时间(YYYY-MM-DD HH:MM:SS.fff)"
       },
       {
         "name": "jobcontent",
@@ -185,7 +185,7 @@
       {
         "name": "jobresulttime",
         "type": "TEXT",
-        "desc": "job结果时间(YYYY-MM-DD HH:MM:SS.SSS)"
+        "desc": "job结果时间(YYYY-MM-DD HH:MM:SS.fff)"
       },
       {
         "name": "finialresult",
@@ -245,12 +245,12 @@
       {
         "name": "starttime",
         "type": "TEXT",
-        "desc": "task开始时间(YYYY-MM-DD HH:MM:SS.SSS)"
+        "desc": "task开始时间(YYYY-MM-DD HH:MM:SS.fff)"
       },
       {
         "name": "endtime",
         "type": "TEXT",
-        "desc": "task结束时间(YYYY-MM-DD HH:MM:SS.SSS)"
+        "desc": "task结束时间(YYYY-MM-DD HH:MM:SS.fff)"
       }
     ]
   },
@@ -285,12 +285,12 @@
       {
         "name": "lastcreatetasklasttime",
         "type": "TEXT",
-        "desc": "用户创建任务的最后时间,job也是task的一类，根据实际去不同表内捞取时间段的"
+        "desc": "用户创建任务的最后时间,job也是task的一类,根据实际去不同表内捞取时间段的"
       },
       {
         "name": "lastassigneetasklasttime",
         "type": "TEXT",
-        "desc": "用户被指向的任务的最后时间,job也是task的一类，根据实际去不同表内捞取时间段的"
+        "desc": "用户被指向的任务的最后时间,job也是task的一类,根据实际去不同表内捞取时间段的"
       },
       {
         "name": "jobrate",
@@ -335,17 +335,182 @@
       {
         "name": "createdatetime",
         "type": "TEXT",
-        "desc": "release创建时间(YYYY-MM-DD HH:MM:SS.SSS)"
+        "desc": "release创建时间(YYYY-MM-DD HH:MM:SS.fff)"
       },
       {
         "name": "modifydatetime",
         "type": "TEXT",
-        "desc": "release修改时间(YYYY-MM-DD HH:MM:SS.SSS)"
+        "desc": "release修改时间(YYYY-MM-DD HH:MM:SS.fff)"
       },
       {
         "name": "releasecontent",
         "type": "TEXT",
-        "desc": "release的内容,JSON格式，除去已被定义的内容外，全部写入content"
+        "desc": "release的内容,JSON格式,除去已被定义的内容外,全部写入content"
+      }
+    ]
+  },
+  {
+    "name": "ro_interfacepackage",
+    "field": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "desc": "interfacepackage的id, 主键"
+      },
+      {
+        "name": "createuserid",
+        "type": "TEXT",
+        "desc": "interfacepackage创建人id"
+      },
+      {
+        "name": "assigneeuserid",
+        "type": "TEXT",
+        "desc": "interfacepackage执行人id"
+      },
+      {
+        "name": "interfacepackagename",
+        "type": "TEXT",
+        "desc": "interfacepackage的名称"
+      },
+      {
+        "name": "interfacepackagedescription",
+        "type": "TEXT",
+        "desc": "interfacepackage的描述"
+      },
+      {
+        "name": "status",
+        "type": "TEXT",
+        "desc": "interfacepackage的状态"
+      },
+      {
+        "name": "createdatetime",
+        "type": "TEXT",
+        "desc": "interfacepackage创建时间(YYYY-MM-DD HH:MM:SS.fff)"
+      },
+      {
+        "name": "modifydatetime",
+        "type": "TEXT",
+        "desc": "interfacepackage修改时间(YYYY-MM-DD HH:MM:SS.fff)"
+      },
+      {
+        "name": "interfaceids",
+        "type": "TEXT",
+        "desc": "包含的interface的id列表"
+      },
+      {
+        "name": "totalinterfaces",
+        "type": "INTEGER",
+        "desc": "interface的总数量"
+      },
+      {
+        "name": "completedinterfaces",
+        "type": "INTEGER",
+        "desc": "interface状态completed的数量"
+      },
+      {
+        "name": "localvariableids",
+        "type": "TEXT",
+        "desc": "此包包含的本地参数化设置的id列表"
+      },
+      {
+        "name": "preinterfaceids",
+        "type": "TEXT",
+        "desc": "此包全量运行时,前置interface的id列表"
+      }
+    ]
+  },
+  {
+    "name": "ro_localvariable",
+    "field": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "desc": "localvariable的id, 主键"
+      },
+      {
+        "name": "createuserid",
+        "type": "TEXT",
+        "desc": "interfacepackage创建人id"
+      },
+      {
+        "name": "localvariablekey",
+        "type": "TEXT",
+        "desc": "localvariable键值名"
+      },
+      {
+        "name": "localvariablevalue",
+        "type": "TEXT",
+        "desc": "localvariable键值值"
+      },
+      {
+        "name": "status",
+        "type": "TEXT",
+        "desc": "interfacepackage的状态"
+      },
+      {
+        "name": "createdatetime",
+        "type": "TEXT",
+        "desc": "interfacepackage创建时间(YYYY-MM-DD HH:MM:SS.fff)"
+      },
+      {
+        "name": "modifydatetime",
+        "type": "TEXT",
+        "desc": "interfacepackage修改时间(YYYY-MM-DD HH:MM:SS.fff)"
+      }
+    ]
+  },
+  {
+    "name": "ro_interface",
+    "field": [
+      {
+        "name": "id",
+        "type": "TEXT",
+        "desc": "interface的id, 主键"
+      },
+      {
+        "name": "packageid",
+        "type": "TEXT",
+        "desc": "归属package的id"
+      },
+      {
+        "name": "createuserid",
+        "type": "TEXT",
+        "desc": "interface创建人id"
+      },
+      {
+        "name": "assigneeuserid",
+        "type": "TEXT",
+        "desc": "interface执行人id"
+      },
+      {
+        "name": "interfacename",
+        "type": "TEXT",
+        "desc": "interface的名称"
+      },
+      {
+        "name": "interfacedescription",
+        "type": "TEXT",
+        "desc": "interface的描述"
+      },
+      {
+        "name": "status",
+        "type": "TEXT",
+        "desc": "interfacepackage的状态"
+      },
+      {
+        "name": "createdatetime",
+        "type": "TEXT",
+        "desc": "interface创建时间(YYYY-MM-DD HH:MM:SS.fff)"
+      },
+      {
+        "name": "modifydatetime",
+        "type": "TEXT",
+        "desc": "interface修改时间(YYYY-MM-DD HH:MM:SS.fff)"
+      },
+      {
+        "name": "interfacecontent",
+        "type": "TEXT",
+        "desc": "interface内容,JSON格式内容"
       }
     ]
   }
