@@ -131,7 +131,7 @@ public abstract class TableHandler
             // 插入数据
             Polymerization.InsertUtil.InsertDataWithField(ComArgs.SqliteConnection, "ro_version",
                 "name,version,author,lastupdate",
-                $"'database','{version}','system','{DateTime.Now:yyyy-MM-dd HH-mm-ss.fff}'");
+                $"'database','{version}','system','{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}'");
         else
             // 更新数据
             Polymerization.UpdateUtil.UpdateDataWithCondition(ComArgs.SqliteConnection, "ro_version",

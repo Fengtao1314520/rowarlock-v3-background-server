@@ -103,7 +103,7 @@ public class RelaseEventHandle
     {
         //重新更新一下modifydatetime
         CuDRelease cuDRelease = para;
-        cuDRelease.ModifyDateTime = DateTime.Now.ToString("yyyyy-MM-dd HH-mm-ss.fff");
+        cuDRelease.ModifyDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
 
         // 执行
         using var dborm = new DBORM<CuDRelease>(ComArgs.SqliteConnection, cuDRelease);
@@ -116,7 +116,7 @@ public class RelaseEventHandle
     {
         //重新更新一下modifydatetime
         CuDRelease cuDRelease = para;
-        cuDRelease.ModifyDateTime = DateTime.Now.ToString("yyyyy-MM-dd HH-mm-ss.fff");
+        cuDRelease.ModifyDateTime = DateTime.Now.ToString("yyyyy-MM-dd HH:mm:ss.fff");
 
         // 执行
         using var dborm = new DBORM<CuDRelease>(ComArgs.SqliteConnection, cuDRelease);
