@@ -21,7 +21,7 @@ internal class TableUtil
     {
         SqliteCommand cmd = new() {Connection = connection, CommandText = $"CREATE TABLE {tablename} ({data})"};
 #if DEBUG
-        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+        LogCore.Log(cmd.CommandText, UOutLevel.Debug);
 #endif
         cmd.ExecuteNonQuery();
     }
@@ -41,7 +41,7 @@ internal class TableUtil
             CommandText = $"SELECT COUNT(*) FROM sqlite_master where type='table' and name='{tablename}';"
         };
 #if DEBUG
-        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+        LogCore.Log(cmd.CommandText, UOutLevel.Debug);
 #endif
         return 0 != Convert.ToInt32(cmd.ExecuteScalar());
     }
@@ -55,7 +55,7 @@ internal class TableUtil
     {
         SqliteCommand cmd = new() {Connection = connection, CommandText = $"DROP TABLE {tablename}"};
 #if DEBUG
-        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+        LogCore.Log(cmd.CommandText, UOutLevel.Debug);
 #endif
         cmd.ExecuteNonQuery();
     }

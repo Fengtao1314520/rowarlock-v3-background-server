@@ -7,14 +7,14 @@ namespace Ro.Basic.UEnum;
 public enum ULogType
 {
     /// <summary>
-    /// 未知来源操作的日志
-    /// </summary>
-    Unknow,
-
-    /// <summary>
     /// 系统自身操作产生的日志
     /// </summary>
     System,
+
+    /// <summary>
+    /// HTTP 相关服务
+    /// </summary>
+    Http,
 
     /// <summary>
     /// 第三方、远程等操作产生的日志
@@ -25,10 +25,5 @@ public enum ULogType
     /// 客户端操作产生的日志
     /// 诸如RoWarlock Execute Tool
     /// </summary>
-    Client,
-
-    /// <summary>
-    /// 由系统创建并控制的子服务操作产生的日志
-    /// </summary>
-    Child,
+    Client
 }

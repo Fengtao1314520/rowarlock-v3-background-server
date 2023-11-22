@@ -22,7 +22,7 @@ internal class ReplaceUtil
         };
 
 #if DEBUG
-        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+        LogCore.Log(cmd.CommandText, UOutLevel.Debug);
 #endif
         cmd.ExecuteNonQuery();
     }

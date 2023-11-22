@@ -21,7 +21,7 @@ public class InsertUtil
             CommandText = $"INSERT INTO {tablename} VALUES ({data})"
         };
 #if DEBUG
-        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+        LogCore.Log(cmd.CommandText, UOutLevel.Debug);
 #endif
         cmd.ExecuteNonQuery();
     }
@@ -43,7 +43,7 @@ public class InsertUtil
             CommandText = $"INSERT INTO {tablename} ({fieldname}) VALUES ({data})"
         };
 #if DEBUG
-        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+        LogCore.Log(cmd.CommandText, UOutLevel.Debug);
 #endif
         int count = cmd.ExecuteNonQuery();
 

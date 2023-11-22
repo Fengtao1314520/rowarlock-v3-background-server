@@ -24,7 +24,7 @@ internal class UpdateUtil
         };
 
 #if DEBUG
-        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+        LogCore.Log(cmd.CommandText, UOutLevel.Debug);
 #endif
         int result = cmd.ExecuteNonQuery();
 
@@ -48,7 +48,7 @@ internal class UpdateUtil
         };
 
 #if DEBUG
-        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+        LogCore.Log(cmd.CommandText, UOutLevel.Debug);
 #endif
         int result = cmd.ExecuteNonQuery();
 

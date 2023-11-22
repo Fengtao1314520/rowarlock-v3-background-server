@@ -48,18 +48,18 @@ public class DatabaseEntrance : IDisposable
     public DatabaseEntrance ConnectDb()
     {
         // 输出日志
-        LogCore.Log("数据库连接中...", UOutLevel.INFO);
+        LogCore.Log("数据库连接中...", UOutLevel.Info);
         string connectionString = $"Data Source = {_dataBaseInfoType.Path}";
         try
         {
             ComArgs.SqliteConnection = new SqliteConnection(connectionString);
             ComArgs.SqliteConnection.Open();
-            LogCore.Log("数据库连接成功", UOutLevel.SUCCESS);
+            LogCore.Pass("数据库连接成功");
             Status = true;
         }
         catch (Exception e)
         {
-            LogCore.Log($"数据库连接失败, {e.Message}", UOutLevel.ERROR);
+            LogCore.Fail($"数据库连接失败, {e.Message}");
             Status = false;
         }
 
@@ -97,7 +97,7 @@ public class DatabaseEntrance : IDisposable
         // 如果文件不存在,则创建一个新的数据库文件
         if (File.Exists(dbfilepath))
         {
-            LogCore.Success("系统已检测到数据库文件");
+            LogCore.Pass("系统已检测到数据库文件");
             Status = true;
         }
         else
@@ -105,7 +105,7 @@ public class DatabaseEntrance : IDisposable
             // INFO: 创建数据库文件，(如果不存在）
             try
             {
-                LogCore.Warn("系统未检测到数据库,将重新新建数据库文件");
+                LogCore.Warning("系统未检测到数据库,将重新新建数据库文件");
                 string dpath = Path.GetDirectoryName(dbfilepath)!;
                 // 创建文件夹
                 Directory.CreateDirectory(dpath);
@@ -114,7 +114,7 @@ public class DatabaseEntrance : IDisposable
                 // UPDATE: 释放资源
                 filestream.Close();
                 filestream.Dispose();
-                LogCore.Success("系统创建数据库成功");
+                LogCore.Pass("系统创建数据库成功");
                 Status = null;
             }
             catch (Exception e)
@@ -190,11 +190,11 @@ public class DatabaseEntrance : IDisposable
             sqlfiles.ToList().ForEach(file =>
             {
                 string name = file.Name;
-                LogCore.Log($"系统正在读取{name}的内容,即将执行...", UOutLevel.INFO);
+                LogCore.Log($"系统正在读取{name}的内容,即将执行...", UOutLevel.Info);
 
                 TableHandler.ExecuteFileCommands(file);
             });
-            LogCore.Success("系统数据库更新成功");
+            LogCore.Pass("系统数据库更新成功");
 
             // UPDATE: 更新到最新的版本号
             if (sqlfiles.Length > 0)
@@ -202,7 +202,7 @@ public class DatabaseEntrance : IDisposable
                 //不带后缀名的名称
                 string lastversion = Path.GetFileNameWithoutExtension(sqlfiles.Last().FullName);
                 TableHandler.UpdateDatabaseVersion(lastversion);
-                LogCore.Success($"系统数据库更新成功, 已更新到版本号:{lastversion}");
+                LogCore.Pass($"系统数据库更新成功, 已更新到版本号:{lastversion}");
             }
 
             Status = true;
@@ -234,7 +234,7 @@ public class DatabaseEntrance : IDisposable
                 string tablename = element["name"]!.ToString(); //获取表名称
                 bool isexist = TableHandler.CheckTableExist(tablename);
                 if (isexist) return;
-                LogCore.Success($"系统未检测到数据表, 创建数据表:'{tablename}' 成功");
+                LogCore.Pass($"系统未检测到数据表, 创建数据表:'{tablename}' 成功");
                 //根据表名执行创建
                 TableHandler.CreateTableByName(element);
             });
@@ -255,7 +255,7 @@ public class DatabaseEntrance : IDisposable
         {
             //根据表名执行创建
             TableHandler.ReplaceTableByName("ro_version", version, "name");
-            LogCore.Success("更新version表成功");
+            LogCore.Pass("更新version表成功");
         }
         catch (Exception e)
         {

@@ -41,8 +41,7 @@ public class Tasks : ICarterModule
         };
 
         // INFO 0: 日志初始化
-        LogStruct logStruct = new();
-        logStruct.Init(true);
+        LogStruct logStruct = new(true);
 
         // INFO 1: 设置返回类型
         ctx.Response.ContentType = "application/json";
@@ -67,7 +66,7 @@ public class Tasks : ICarterModule
             false => QuoteVaildator.NoneValidResponse
         };
         // INFO 4: 日志输出
-        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        EmojiLog.GenerateFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
         // INFO 5: 返回结果
         return Results.Json(result);
@@ -91,8 +90,7 @@ public class Tasks : ICarterModule
         };
 
         // INFO 0: 日志初始化
-        LogStruct logStruct = new();
-        logStruct.Init(true);
+        LogStruct logStruct = new(true);
 
         // INFO 1: 设置返回类型
         ctx.Response.ContentType = "application/json";
@@ -128,7 +126,7 @@ public class Tasks : ICarterModule
         }
 
         // INFO 4: 日志输出
-        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        EmojiLog.GenerateFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
         // INFO 5: 返回结果
         return Results.Json(result);

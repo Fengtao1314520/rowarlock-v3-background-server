@@ -19,7 +19,7 @@ internal class DeleteUtil
             CommandText = $"DELETE FROM {tabname}"
         };
 #if DEBUG
-        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+        LogCore.Log(cmd.CommandText, UOutLevel.Debug);
 #endif
         cmd.ExecuteNonQuery();
     }
@@ -40,7 +40,7 @@ internal class DeleteUtil
             CommandText = $"DELETE FROM {tabname} WHERE {condition}"
         };
 #if DEBUG
-        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+        LogCore.Log(cmd.CommandText, UOutLevel.Debug);
 #endif
         int count = cmd.ExecuteNonQuery();
 

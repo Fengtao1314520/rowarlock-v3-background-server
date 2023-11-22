@@ -28,7 +28,7 @@ internal class SelectUtil
         };
 
 #if DEBUG
-        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+        LogCore.Log(cmd.CommandText, UOutLevel.Debug);
 #endif
         // 执行查询
         SqliteDataReader reader = cmd.ExecuteReader();
@@ -69,7 +69,7 @@ internal class SelectUtil
         SqliteCommand cmd = new() {Connection = connection, CommandText = $"SELECT {columndata} FROM {tablename}"};
 
 #if DEBUG
-        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+        LogCore.Log(cmd.CommandText, UOutLevel.Debug);
 #endif
         SqliteDataReader reader = cmd.ExecuteReader();
         DataTable dataTable = new();
@@ -135,7 +135,7 @@ internal class SelectUtil
         };
 
 #if DEBUG
-        LogCore.Log(cmd.CommandText, UOutLevel.DEBUG);
+        LogCore.Log(cmd.CommandText, UOutLevel.Debug);
 #endif
 
         SqliteDataReader reader = cmd.ExecuteReader();

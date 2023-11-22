@@ -6,7 +6,7 @@ using rowarlockgbserver;
 
 
 //INFO: MAIN
-LogCore.Log("当前程序路径:" + ComArgs.ExecutionPath, UOutLevel.DEBUG);
+LogCore.Debug("当前程序路径:" + ComArgs.ExecutionPath);
 // IMP!: 切换到当前目录
 Directory.SetCurrentDirectory(ComArgs.ExecutionPath);
 
@@ -17,7 +17,7 @@ me.Start();
 if (me.Status)
 {
     //输出日志  
-    LogCore.Log("系统加载完毕", UOutLevel.SUCCESS);
+    LogCore.Pass("系统加载完毕");
     OutputHeader.LoginOutputBottom();
 // 当有输入时,且必须是exit，停止服务
     string? rl = "";
@@ -26,9 +26,9 @@ if (me.Status)
 else
 {
     //输出日志
-    LogCore.Log("系统加载失败", UOutLevel.ERROR);
+    LogCore.Fail("系统加载失败");
 }
 
 // 关闭并释放资源
 me.Stop().Dispose();
-LogCore.Log("结束执行...", UOutLevel.INFO);
+LogCore.Info("结束执行...");

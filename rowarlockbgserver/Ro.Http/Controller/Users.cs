@@ -36,8 +36,7 @@ public class Users : ICarterModule
     private IResult Login(HttpContext ctx, CuDUserDetails cuDUserInfo)
     {
         // INFO 0: 日志初始化
-        LogStruct logStruct = new();
-        logStruct.Init(true);
+        LogStruct logStruct = new(true);
 
         // INFO 1: 设置返回类型
         ctx.Response.ContentType = "application/json";
@@ -61,7 +60,7 @@ public class Users : ICarterModule
             false => QuoteVaildator.NoneValidResponse
         };
         // INFO 4: 日志输出
-        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        EmojiLog.GenerateFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
         // INFO 5: 返回结果
         return Results.Json(result);
@@ -77,8 +76,7 @@ public class Users : ICarterModule
     private IResult Logout(HttpContext ctx, CuDUserDetails cuDUserInfo)
     {
         // INFO 0: 日志初始化
-        LogStruct logStruct = new();
-        logStruct.Init(true);
+        LogStruct logStruct = new(true);
 
         // INFO 1: 设置返回类型
         ctx.Response.ContentType = "application/json";
@@ -102,7 +100,7 @@ public class Users : ICarterModule
             false => QuoteVaildator.NoneValidResponse
         };
         // INFO 4: 日志输出
-        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        EmojiLog.GenerateFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
         // INFO 5: 返回结果
         return Results.Json(result);
@@ -119,8 +117,7 @@ public class Users : ICarterModule
     private IResult CreateUserInfo(HttpContext ctx, CuDUserDetails cuDUserInfo)
     {
         // INFO 0: 日志初始化
-        LogStruct logStruct = new();
-        logStruct.Init(true);
+        LogStruct logStruct = new(true);
 
         // INFO 1: 设置返回类型
         ctx.Response.ContentType = "application/json";
@@ -144,7 +141,7 @@ public class Users : ICarterModule
             false => QuoteVaildator.NoneValidResponse
         };
         // INFO 4: 日志输出
-        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        EmojiLog.GenerateFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
         // INFO 5: 返回结果
         return Results.Json(result);
@@ -160,8 +157,7 @@ public class Users : ICarterModule
     private IResult UpdateUserInfo(HttpContext ctx, CuDUserDetails cuDUserInfo)
     {
         // INFO 0: 日志初始化
-        LogStruct logStruct = new();
-        logStruct.Init(true);
+        LogStruct logStruct = new(true);
 
         // INFO 1: 设置返回类型
         ctx.Response.ContentType = "application/json";
@@ -185,7 +181,7 @@ public class Users : ICarterModule
             false => QuoteVaildator.NoneValidResponse
         };
         // INFO 4: 日志输出
-        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        EmojiLog.GenerateFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
         // INFO 5: 返回结果
         return Results.Json(result);
@@ -209,8 +205,7 @@ public class Users : ICarterModule
         };
 
         // INFO 0: 日志初始化
-        LogStruct logStruct = new();
-        logStruct.Init(true);
+        LogStruct logStruct = new(true);
 
         // INFO 1: 设置返回类型
         ctx.Response.ContentType = "application/json";
@@ -234,7 +229,7 @@ public class Users : ICarterModule
             false => QuoteVaildator.NoneValidResponse
         };
         // INFO 4: 日志输出
-        ExtraLog.GenerateSystemFormatLog(result, ref logStruct); //结果输出
+        EmojiLog.GenerateFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
         // INFO 5: 返回结果
         return Results.Json(result);

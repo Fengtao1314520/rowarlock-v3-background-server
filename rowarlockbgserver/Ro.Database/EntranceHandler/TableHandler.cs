@@ -50,7 +50,7 @@ public abstract class TableHandler
         string command = sb.ToString().Remove(sb.ToString().Length - 1, 1);
 #if DEBUG
         // 输出
-        LogCore.Log(command, UOutLevel.DEBUG);
+        LogCore.Log(command, UOutLevel.Debug);
 #endif
         //执行创建table
         Polymerization.TableUtil.CreateTable(ComArgs.SqliteConnection, name.ToString(), command);
