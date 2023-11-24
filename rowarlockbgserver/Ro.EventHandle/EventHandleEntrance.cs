@@ -14,6 +14,7 @@ public class EventHandleEntrance
     private readonly StatisticsEventHandle _statisticsEventHandle;
     private readonly LocalVariableEventHandle _localVariableEventHandle;
     private readonly InterfaceEventHandle _interfaceEventHandle;
+    private readonly JobEventHandle _jobEventHandle;
 
     /// <summary>
     /// 构造函数
@@ -27,6 +28,7 @@ public class EventHandleEntrance
         _interfacePackageEventHandle = new InterfacePackageEventHandle();
         _localVariableEventHandle = new LocalVariableEventHandle();
         _interfaceEventHandle = new InterfaceEventHandle();
+        _jobEventHandle = new JobEventHandle();
     }
 
     /// <summary>
@@ -41,6 +43,7 @@ public class EventHandleEntrance
         _interfacePackageEventHandle.LoadEvent();
         _localVariableEventHandle.LoadEvent();
         _interfaceEventHandle.LoadEvent();
+        _jobEventHandle.LoadEvent();
     }
 
 
@@ -56,5 +59,6 @@ public class EventHandleEntrance
         _interfacePackageEventHandle.UnLoadEvent();
         _localVariableEventHandle.UnLoadEvent();
         _interfaceEventHandle.UnLoadEvent();
+        _jobEventHandle.UnLoadEvent();
     }
 }
