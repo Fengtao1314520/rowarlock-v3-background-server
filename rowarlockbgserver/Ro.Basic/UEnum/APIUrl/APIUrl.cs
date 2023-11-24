@@ -11,4 +11,5 @@ public abstract class ApiUrl
     public const string INTERFACEPACKAGE = "/interfacepackage";
     public const string RELEASE = "/release";
     public const string JOB = "/job";
+    public const string LOCALVARIABLE = "/localvariable";
 }

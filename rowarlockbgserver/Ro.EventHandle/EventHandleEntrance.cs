@@ -12,6 +12,8 @@ public class EventHandleEntrance
     private readonly RelaseEventHandle _relaseEventHandle;
     private readonly InterfacePackageEventHandle _interfacePackageEventHandle;
     private readonly StatisticsEventHandle _statisticsEventHandle;
+    private readonly LocalVariableEventHandle _localVariableEventHandle;
+    private readonly InterfaceEventHandle _interfaceEventHandle;
 
     /// <summary>
     /// 构造函数
@@ -23,6 +25,8 @@ public class EventHandleEntrance
         _taskEventHandle = new TasksEventHandle();
         _relaseEventHandle = new RelaseEventHandle();
         _interfacePackageEventHandle = new InterfacePackageEventHandle();
+        _localVariableEventHandle = new LocalVariableEventHandle();
+        _interfaceEventHandle = new InterfaceEventHandle();
     }
 
     /// <summary>
@@ -35,6 +39,8 @@ public class EventHandleEntrance
         _taskEventHandle.LoadEvent();
         _relaseEventHandle.LoadEvent();
         _interfacePackageEventHandle.LoadEvent();
+        _localVariableEventHandle.LoadEvent();
+        _interfaceEventHandle.LoadEvent();
     }
 
 
@@ -48,5 +54,7 @@ public class EventHandleEntrance
         _taskEventHandle.UnLoadEvent();
         _relaseEventHandle.UnLoadEvent();
         _interfacePackageEventHandle.UnLoadEvent();
+        _localVariableEventHandle.UnLoadEvent();
+        _interfaceEventHandle.UnLoadEvent();
     }
 }
