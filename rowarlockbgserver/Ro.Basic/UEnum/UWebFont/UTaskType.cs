@@ -11,5 +11,5 @@ public enum UTaskType
     Release = 3,
     Daily = 4,
     Report = 5,
-    JobTest = 10
+    JobTest = 6
 }
