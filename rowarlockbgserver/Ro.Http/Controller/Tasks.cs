@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Carter;
 using Carter.Request;
 using Microsoft.AspNetCore.Builder;
@@ -45,6 +46,7 @@ public class Tasks : ICarterModule
 
         // INFO 1: 设置返回类型
         ctx.Response.ContentType = "application/json";
+        ctx.Response.Headers.Origin = "*";
 
         // INFO 2: 拼装请求对象
         HOutObjType hOutObjType = new()
@@ -69,7 +71,10 @@ public class Tasks : ICarterModule
         EmojiLog.GenerateFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
         // INFO 5: 返回结果
-        return Results.Json(result);
+        return Results.Json(result, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = null
+        });
     }
 
 
@@ -129,6 +134,9 @@ public class Tasks : ICarterModule
         EmojiLog.GenerateFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
         // INFO 5: 返回结果
-        return Results.Json(result);
+        return Results.Json(result, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = null
+        });
     }
 }

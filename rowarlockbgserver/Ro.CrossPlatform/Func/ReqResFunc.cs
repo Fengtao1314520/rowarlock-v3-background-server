@@ -51,8 +51,6 @@ public static class ReqResFunc
                 rt.resmessage = "未知错误";
                 return rt;
         }
-
-        return rt;
     }
 
 

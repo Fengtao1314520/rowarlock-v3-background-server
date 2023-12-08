@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Carter;
 using Carter.Request;
 using Microsoft.AspNetCore.Builder;
@@ -51,7 +52,10 @@ public class LocalVariable : ICarterModule
         EmojiLog.GenerateFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
         // INFO 5: 返回结果
-        return Results.Json(result);
+        return Results.Json(result, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = null
+        });
     }
 
     private IResult CreateLocalVariable(HttpContext ctx, CuDLocalVariable cuDLocalVariable)
@@ -84,7 +88,10 @@ public class LocalVariable : ICarterModule
         EmojiLog.GenerateFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
         // INFO 5: 返回结果
-        return Results.Json(result);
+        return Results.Json(result, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = null
+        });
     }
 
     private IResult GetLocalVariable(HttpContext ctx)
@@ -126,6 +133,9 @@ public class LocalVariable : ICarterModule
         EmojiLog.GenerateFormatLog(result, ref logStruct); //结果输出
         OutLogStruct.Out(logStruct);
         // INFO 5: 返回结果
-        return Results.Json(result);
+        return Results.Json(result, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = null
+        });
     }
 }
