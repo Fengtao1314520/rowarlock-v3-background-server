@@ -65,13 +65,13 @@ public class MainEntrance : IDisposable
     {
         // config的JObject
         JObject configJObject = ResolveConfig.ResolveConfigToJObject(Configpath);
-        // info 1. 打开数据库
+        // info 打开数据库
         StartDatabase(configJObject);
-        // info 2. 读取sql文件夹，并更新
+        // info 读取sql文件夹，并更新
         UpdateSql();
-        // info 3.打开网络服务
+        // info 打开网络服务
         StartHttpServer(configJObject);
-        // info 4. 加载事件
+        // info 加载事件
         _eventHandleEntrance.LoadEvents();
         return this;
     }
@@ -81,8 +81,11 @@ public class MainEntrance : IDisposable
     /// </summary>
     public MainEntrance Stop()
     {
+        // info 关闭数据库
         _databaseEntrance.DisconnectDb();
-        // info 4. 卸载事件
+        // info 关闭网络服务
+        _httpEntrance.Stop();
+        // info 卸载事件
         _eventHandleEntrance.UnLoadEvents();
         return this;
     }

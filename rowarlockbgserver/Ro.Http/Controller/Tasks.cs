@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 using Carter;
 using Carter.Request;
@@ -100,12 +101,14 @@ public class Tasks : ICarterModule
         // INFO 1: 设置返回类型
         ctx.Response.ContentType = "application/json";
 
+        // info 需要解码encodeURI
+        string decodedString = WebUtility.UrlDecode(condition);
         // INFO 2: 拼装请求对象
         HOutObjType hOutObjType = new()
         {
             Method = ApiMethod.GET,
             Api = ApiUrl.STATISTICS,
-            Para = condition
+            Para = decodedString
         };
 
         // INFO 3: 验证
@@ -116,7 +119,7 @@ public class Tasks : ICarterModule
         if (valid)
         {
             // INFO 3.2 执行不同的操作
-            dynamic dycondition = JsonFunc.DeserialzeJsonObject<dynamic>(condition);
+            dynamic dycondition = JsonFunc.DeserialzeJsonObject<dynamic>(decodedString);
             string? qtype = dycondition["qtype"].ToString();
             result = qtype switch
             {
