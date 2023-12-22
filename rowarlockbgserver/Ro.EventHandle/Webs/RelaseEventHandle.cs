@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.JavaScript;
 using Ro.Basic;
 using Ro.Basic.UEnum;
 using Ro.Basic.UType.Communicate;
@@ -35,18 +36,25 @@ public class RelaseEventHandle
     {
         // 参数实例化
         CuDRelease cuDRelease = para;
-        // string condition = houtobj.Para;
-        // dynamic dycondition = JsonFunc.DeserialzeJsonObject<dynamic>(condition);
+
 
         // 执行
         using var dborm = new DBORM<CuDRelease>(ComArgs.SqliteConnection, cuDRelease);
         var queryresult = dborm.Query($"assigneeuserid='{cuDRelease.AssigneeUserId}'");
+        var queryreslutList = new List<dynamic>();
         if (queryresult.Any())
         {
-            // 按年分组,年为分组的主键
+            // 只获取年份和对应年份数量
             var group = queryresult.GroupBy(release => Convert.ToDateTime(release.CreateDateTime).Year);
-            var enumerable = group.ToDictionary(obj => obj.Key, obj => obj.ToList());
-            return ReqResFunc.GetResponseBody(enumerable.Any() ? UReqCode.Success : UReqCode.Fail, enumerable);
+            var enumerable = group.ToList();
+            enumerable.ForEach(item =>
+            {
+                dynamic queryreslut = new {year = item.Key, count = item.Count()};
+                queryreslutList.Add(queryreslut);
+            });
+
+            return ReqResFunc.GetResponseBody(queryreslutList.Any() ? UReqCode.Success : UReqCode.Fail,
+                queryreslutList);
         }
 
         // 设置返回类型，失败的,设置返回类型，成功的
@@ -84,7 +92,7 @@ public class RelaseEventHandle
         var queryresult = dborm.Query($"assigneeuserid='{cuDRelease.AssigneeUserId}'");
         if (queryresult.Any())
         {
-            // 按年分组后, 对比year给列表
+            // 只获取年份和对应年份数量
             var group = queryresult.GroupBy(release => Convert.ToDateTime(release.CreateDateTime).Year);
 
             var enumerable = group.ToList();

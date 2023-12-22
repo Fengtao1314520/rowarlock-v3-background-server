@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 using Carter;
 using Carter.Request;
@@ -106,6 +107,8 @@ public class Release : ICarterModule
         IQueryCollection allQuery = ctx.Request.Query;
         string? userid = allQuery.AsMultiple<string>("userid").FirstOrDefault();
         string condition = allQuery["condition"].ToString();
+        // info 需要解码encodeURI
+        string decodedString = WebUtility.UrlDecode(condition);
         CuDRelease cuDRelease = new()
         {
             AssigneeUserId = userid
@@ -122,7 +125,7 @@ public class Release : ICarterModule
         {
             Method = ApiMethod.GET,
             Api = ApiUrl.STATISTICS,
-            Para = condition
+            Para = decodedString
         };
 
         // INFO 3: 验证
@@ -133,7 +136,7 @@ public class Release : ICarterModule
         if (valid)
         {
             // INFO 3.2 执行不同的操作
-            dynamic dycondition = JsonFunc.DeserialzeJsonObject<dynamic>(condition);
+            dynamic dycondition = JsonFunc.DeserialzeJsonObject<dynamic>(decodedString);
             string? qtype = dycondition["qtype"].ToString();
             result = qtype switch
             {

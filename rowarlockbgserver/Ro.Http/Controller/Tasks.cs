@@ -90,6 +90,9 @@ public class Tasks : ICarterModule
         IQueryCollection allQuery = ctx.Request.Query;
         string? userid = allQuery.AsMultiple<string>("userid").FirstOrDefault();
         string condition = allQuery["condition"].ToString();
+        // info 需要解码encodeURI
+        string decodedString = WebUtility.UrlDecode(condition);
+
         CuDTask cudTask = new()
         {
             AssigneeUserId = userid
@@ -101,8 +104,6 @@ public class Tasks : ICarterModule
         // INFO 1: 设置返回类型
         ctx.Response.ContentType = "application/json";
 
-        // info 需要解码encodeURI
-        string decodedString = WebUtility.UrlDecode(condition);
         // INFO 2: 拼装请求对象
         HOutObjType hOutObjType = new()
         {
