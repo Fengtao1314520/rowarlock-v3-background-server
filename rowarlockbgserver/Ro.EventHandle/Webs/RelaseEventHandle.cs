@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.JavaScript;
 using Ro.Basic;
 using Ro.Basic.UEnum;
 using Ro.Basic.UType.Communicate;
@@ -40,7 +39,8 @@ public class RelaseEventHandle
 
         // 执行
         using var dborm = new DBORM<CuDRelease>(ComArgs.SqliteConnection, cuDRelease);
-        var queryresult = dborm.Query($"assigneeuserid='{cuDRelease.AssigneeUserId}'");
+        var queryresult =
+            dborm.Query($"assigneeuserid='{cuDRelease.AssigneeUserId}'");
         var queryreslutList = new List<dynamic>();
         if (queryresult.Any())
         {
@@ -89,18 +89,18 @@ public class RelaseEventHandle
 
         // 执行
         using var dborm = new DBORM<CuDRelease>(ComArgs.SqliteConnection, cuDRelease);
-        var queryresult = dborm.Query($"assigneeuserid='{cuDRelease.AssigneeUserId}'");
+        var queryresult =
+            dborm.Query($"assigneeuserid='{cuDRelease.AssigneeUserId}' AND strftime('%Y', createdatetime) = '{year}'");
         if (queryresult.Any())
         {
-            // 只获取年份和对应年份数量
-            var group = queryresult.GroupBy(release => Convert.ToDateTime(release.CreateDateTime).Year);
-
-            var enumerable = group.ToList();
-            if (enumerable.Any())
+            // 返回id和name
+            var onlytitleandid = new List<dynamic>();
+            queryresult.ToList().ForEach(item =>
             {
-                var yearlist = enumerable.Where(release => release.Key.ToString() == year.ToString()).ToList();
-                return ReqResFunc.GetResponseBody(yearlist.Any() ? UReqCode.Success : UReqCode.Fail, yearlist);
-            }
+                var onlytitle = new {id = item.Id, name = item.ReleaseName};
+                onlytitleandid.Add(onlytitle);
+            });
+            return ReqResFunc.GetResponseBody(onlytitleandid.Any() ? UReqCode.Success : UReqCode.Fail, onlytitleandid);
         }
 
         // 设置返回类型，失败的,设置返回类型，成功的
